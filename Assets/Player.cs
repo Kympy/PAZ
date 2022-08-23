@@ -6,10 +6,19 @@ public class Player : Actor
 {
     private float horizontal = 0f;
     private float vertical = 0f;
-    private float speed = 10f;
+    [SerializeField]
+    private readonly float speed = 1.2f; // Walk Speed
+    [SerializeField]
+    private readonly float runSpeed = 4.5f;
+
+    private float currentVelocity = 0f;
+    [SerializeField]
     private float turnSpeed = 2f;
+    private float runTimer = 0f;
 
     private bool IsJump = false;
+    private bool IsSprint = false;
+    [SerializeField]
     private float jumpPower = 10f;
 
     private Vector3 desiredPos;
@@ -22,21 +31,25 @@ public class Player : Actor
         animator = GetComponent<Animator>();
         rigidBody = GetComponent<Rigidbody>();
     }
+    private void Start()
+    {
+        StartCoroutine(PlayerVelocity());
+    }
     private void Update()
     {
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
         IsJump = Input.GetKeyDown(KeyCode.Space);
+        IsSprint = Input.GetKey(KeyCode.LeftShift);
 
         desiredPos.Set(horizontal, 0f, vertical);
         desiredPos.Normalize();
 
-        
 
         ChangeAnimation();
 
-        Debug.Log(rigidBody.velocity.magnitude);
-        RotateMe();
+        //Debug.Log(rigidBody.velocity.magnitude * 3.6f);
+        //RotateMe();
     }
     private void FixedUpdate()
     {
@@ -51,8 +64,41 @@ public class Player : Actor
     }
     private void Movement()
     {
-        rigidBody.AddForce(desiredPos * speed, ForceMode.Acceleration);
+        rigidBody.velocity = desiredPos * currentVelocity;
+        /*
+        if (IsSprint == false)
+        {
+            
+            
+        }
+        else
+        {
+            rigidBody.velocity = desiredPos * currentVelocity * 2f;
+        }
+        
+        */
+    }
+    private IEnumerator PlayerVelocity()
+    {
+        while (true)
+        {
+            if(IsSprint)
+            {
+                runTimer += Time.deltaTime;
+                currentVelocity = Mathf.Lerp(speed, runSpeed, runTimer);
+                Debug.Log("Lerp : " + currentVelocity);
+            }
+            else
+            {
+                runTimer = 0f;
+                currentVelocity -= 0.02f;
+                if (currentVelocity < speed) currentVelocity = speed;
+                Debug.Log("Lerp Release : " + currentVelocity);
+            }
 
+
+            yield return null;
+        }
     }
     private void RotateMe()
     {
