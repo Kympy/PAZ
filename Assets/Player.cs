@@ -9,15 +9,19 @@ public class Player : Actor
     [SerializeField]
     private readonly float speed = 1.2f; // Walk Speed
     [SerializeField]
-    private readonly float runSpeed = 4.5f;
+    private readonly float runSpeed = 9f;
+    private float turnSpeed = 2f;
+    private float rotateSpeed = 20f;
 
     private float currentVelocity = 0f;
     [SerializeField]
-    private float turnSpeed = 2f;
+
     private float runTimer = 0f;
+    private float mouseX = 0f;
 
     private bool IsJump = false;
     private bool IsSprint = false;
+    private bool AltInput = false;
     [SerializeField]
     private float jumpPower = 10f;
 
@@ -41,6 +45,7 @@ public class Player : Actor
         vertical = Input.GetAxis("Vertical");
         IsJump = Input.GetKeyDown(KeyCode.Space);
         IsSprint = Input.GetKey(KeyCode.LeftShift);
+        AltInput = Input.GetKey(KeyCode.LeftAlt);
 
         desiredPos.Set(horizontal, 0f, vertical);
         desiredPos.Normalize();
@@ -49,13 +54,12 @@ public class Player : Actor
         ChangeAnimation();
 
         //Debug.Log(rigidBody.velocity.magnitude * 3.6f);
-        //RotateMe();
     }
     private void FixedUpdate()
     {
         Movement();
         Jump();
-
+        RotateMe();
     }
     private void Jump()
     {
@@ -65,18 +69,6 @@ public class Player : Actor
     private void Movement()
     {
         rigidBody.velocity = desiredPos * currentVelocity;
-        /*
-        if (IsSprint == false)
-        {
-            
-            
-        }
-        else
-        {
-            rigidBody.velocity = desiredPos * currentVelocity * 2f;
-        }
-        
-        */
     }
     private IEnumerator PlayerVelocity()
     {
@@ -85,23 +77,23 @@ public class Player : Actor
             if(IsSprint)
             {
                 runTimer += Time.deltaTime;
-                currentVelocity = Mathf.Lerp(speed, runSpeed, runTimer);
-                Debug.Log("Lerp : " + currentVelocity);
+                currentVelocity = Mathf.Lerp(speed, runSpeed, runTimer * 0.5f);
+                //Debug.Log("Lerp : " + currentVelocity);
             }
             else
             {
                 runTimer = 0f;
-                currentVelocity -= 0.02f;
+                currentVelocity -= 0.03f;
                 if (currentVelocity < speed) currentVelocity = speed;
-                Debug.Log("Lerp Release : " + currentVelocity);
+                //Debug.Log("Lerp Release : " + currentVelocity);
             }
-
 
             yield return null;
         }
     }
     private void RotateMe()
     {
+        /*
         if(vertical > 0)
         {
             desiredDir = Vector3.RotateTowards(transform.forward, desiredPos, turnSpeed * Time.deltaTime, 0f);
@@ -111,6 +103,12 @@ public class Player : Actor
         {
             desiredDir = Vector3.RotateTowards(transform.forward, -desiredPos, turnSpeed * Time.deltaTime, 0f);
             transform.rotation = Quaternion.LookRotation(desiredDir);
+        }
+        */
+        if(AltInput == false)
+        {
+            mouseX += Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
+            rigidBody.rotation = Quaternion.Euler(0f, mouseX, 0f);
         }
     }
     private void ChangeAnimation()
