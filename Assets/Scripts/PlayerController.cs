@@ -34,9 +34,15 @@ public class PlayerController : MonoBehaviour
     private bool IsJump = false;
     private bool IsSprint = false;
     private bool IsBrake = false;
+    private bool IsFalling = false;
+    private bool CanJumpOver = false;
+
+
     private bool CursorLocked = false;
+    private bool CoroutineAlready = false;
 
     private const float gravityForce = -9.8f;
+    private WaitForSeconds oneSec = new WaitForSeconds(1f);
     Vector3 playerVeolcity = Vector3.zero;
     private void Awake()
     {
@@ -57,13 +63,13 @@ public class PlayerController : MonoBehaviour
     {
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
         IsJump = _InputManager.Jump;
-        AnimationPlay();
         MouseCamera();
+        AnimationPlay();
         Jump();
     }
     private void Movement() // Character Movement And Rotation
     {
-        if (IsLanding() == false)
+        if (IsLanding() == false && IsFalling == false)
         {
             finalVector = Vector3.zero;
             if (_InputManager.Horizontal != 0f) // Has Horizontal Movement
@@ -98,8 +104,19 @@ public class PlayerController : MonoBehaviour
     }
     private bool IsGrounded()
     {
-        //Debug.Log($"## center {new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z).ToString()} {groundClearance}");
-        return Physics.CheckSphere(new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z), groundClearance, ~LayerMask.NameToLayer("Terrain"));
+        if (Physics.CheckSphere(new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z), groundClearance, ~LayerMask.NameToLayer("Terrain")))
+        {
+            IsFalling = false;
+            return true;
+        }
+        else
+        {
+            if(CoroutineAlready == false)
+            {
+                StartCoroutine(FallingCheck());
+            }
+            return false;
+        }
     }
     private bool IsLanding()
     {
@@ -109,8 +126,34 @@ public class PlayerController : MonoBehaviour
         }
         else return false;
     }
+    private IEnumerator FallingCheck()
+    {
+        CoroutineAlready = true;
+        int timer = 0;
+        while(true)
+        {
+            if(IsGrounded() == false)
+            {
+                timer += 1;
+                if(timer >= 3)
+                {
+                    IsFalling = true;
+                    CoroutineAlready = false;
+                    yield break;
+                }
+            }
+            else
+            {
+                IsFalling = false;
+                CoroutineAlready = false;
+                yield break;
+            }
+            yield return oneSec;
+        }
+    }
     private void Jump()
     {
+
         if (IsJump && IsGrounded())
         {
             _Rigidbody.AddForce(transform.up * jumpPower, ForceMode.VelocityChange);
@@ -149,7 +192,7 @@ public class PlayerController : MonoBehaviour
                 moveSpeed += 0.03f;
                 if (moveSpeed > RunBackSpeed) moveSpeed = RunBackSpeed;
             }
-            else if(_InputManager.Horizontal != 0 && _InputManager.Sprint == false)
+            else if(_InputManager.Horizontal != 0)
             {
                 moveSpeed = 2f;
             }
@@ -167,7 +210,7 @@ public class PlayerController : MonoBehaviour
         {
             CursorLocked = CursorLocked ? false : true;
         }
-        if (CursorLocked == false) return;
+        if (CursorLocked == true) return;
 
         relativeVector = transform.InverseTransformPoint(focusPoint.transform.position);
         relativeVector /= relativeVector.magnitude;
@@ -183,9 +226,25 @@ public class PlayerController : MonoBehaviour
         _Animator.SetFloat("Horizontal", _InputManager.Horizontal * moveSpeed);
         _Animator.SetBool("IsMove", IsMove);
         _Animator.SetBool("IsGrounded", IsGrounded());
+        _Animator.SetBool("IsFalling", IsFalling);
         //_Animator.SetFloat("Jump", _InputManager.Jump);
         //_Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed < 2f);
         _Animator.SetBool("Jump", _InputManager.Jump);
+        _Animator.SetBool("CanJumpOver", CanJumpOver);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Obstacle"))
+        {
+            CanJumpOver = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.CompareTag("Obstacle"))
+        {
+            CanJumpOver = false;
+        }
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
