@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     [HideInInspector] private InputManager _InputManager;
     [HideInInspector] private Animator _Animator;
+    [HideInInspector] private Rigidbody _Rigidbody;
 
     [HideInInspector] private Vector3 moveVector; // Desired Movement Vector
     [HideInInspector] private Vector3 relativeVector;
@@ -14,8 +15,8 @@ public class PlayerController : MonoBehaviour
     private float moveSpeed = 0f;
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 2f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
-    [SerializeField, Range(0f, 50f)] private float BackSpeed = 1f;
-    [SerializeField, Range(0f, 50f)] private float RunBackSpeed = 2f;
+    [SerializeField, Range(0f, 50f)] private float BackSpeed = 2f;
+    [SerializeField, Range(0f, 50f)] private float RunBackSpeed = 4f;
 
     [SerializeField, Range(0f, 100f)] private float jumpPower = 10f;
     [SerializeField, Range(0f, 0.5f)] private float groundClearance = 0.25f;
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private GameObject focusPoint;
 
     private bool IsMove = false;
+    private bool IsJump = false;
     private bool IsSprint = false;
     private bool IsBrake = false;
     private bool CursorLocked = false;
@@ -38,22 +40,28 @@ public class PlayerController : MonoBehaviour
     {
         _InputManager = GetComponent<InputManager>();
         _Animator = GetComponent<Animator>();
+        _Rigidbody = GetComponent<Rigidbody>();
     }
     private void Start()
     {
         focusPoint = GameObject.Find("Focus");
         StartCoroutine(GetPlayerVelocity());
     }
+    private void FixedUpdate()
+    {
+        Movement();
+    }
     private void Update()
     {
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
-        Movement();
+        IsJump = _InputManager.Jump;
         AnimationPlay();
         MouseCamera();
+        Jump();
     }
     private void Movement()
     {
-        if (IsGrounded())
+        if (IsLanding() == false)
         {
             moveVector = transform.forward * _InputManager.Vertical + transform.right * _InputManager.Horizontal; // Calculate Vector
             if (IsMove)
@@ -63,10 +71,7 @@ public class PlayerController : MonoBehaviour
                 focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
             }
         }
-        if (_InputManager.Jump && IsGrounded())
-        {
-            
-        }
+
 
     }
     private bool IsGrounded()
@@ -74,9 +79,21 @@ public class PlayerController : MonoBehaviour
         //Debug.Log($"## center {new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z).ToString()} {groundClearance}");
         return Physics.CheckSphere(new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z), groundClearance, ~LayerMask.NameToLayer("Terrain"));
     }
+    private bool IsLanding()
+    {
+        if (_Animator.GetCurrentAnimatorStateInfo(0).IsName("Land") && _Animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            return true;
+        }
+        else return false;
+    }
     private void Jump()
     {
-
+        if (IsJump && IsGrounded())
+        {
+            _Rigidbody.AddForce(transform.up * jumpPower, ForceMode.VelocityChange);
+        }
+        
     }
     private IEnumerator GetPlayerVelocity()
     {
@@ -138,6 +155,7 @@ public class PlayerController : MonoBehaviour
     {
         _Animator.SetFloat("Vertical", _InputManager.Vertical * moveSpeed);
         _Animator.SetFloat("Horizontal", _InputManager.Horizontal * moveSpeed);
+        _Animator.SetBool("IsMove", IsMove);
         _Animator.SetBool("IsGrounded", IsGrounded());
         //_Animator.SetFloat("Jump", _InputManager.Jump);
         //_Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed < 2f);

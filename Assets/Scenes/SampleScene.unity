@@ -2571,9 +2571,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WalkSpeed: 2
   RunSpeed: 8
-  BackSpeed: 1
-  RunBackSpeed: 2
-  jumpPower: 10
+  BackSpeed: 2
+  RunBackSpeed: 4
+  jumpPower: 7
   groundClearance: 0.25
   groundDistance: 0.25
   mouseSensitivity_X: 100
