@@ -15,10 +15,9 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] private Vector3 finalVector = Vector3.zero;
 
     private float moveSpeed = 0f;
-    [SerializeField, Range(0f, 50f)] private float WalkSpeed = 2f;
+    [SerializeField, Range(0f, 50f)] private float WalkSpeed = 4f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
-    [SerializeField, Range(0f, 50f)] private float BackSpeed = 2f;
-    [SerializeField, Range(0f, 50f)] private float RunBackSpeed = 4f;
+    [SerializeField, Range(0f, 50f)] private float BackSpeed = 4f;
 
     [SerializeField, Range(0f, 100f)] private float jumpPower = 10f;
     [SerializeField, Range(0f, 0.5f)] private float groundClearance = 0.25f;
@@ -35,8 +34,6 @@ public class PlayerController : MonoBehaviour
     private bool IsSprint = false;
     private bool IsBrake = false;
     private bool IsFalling = false;
-    private bool CanJumpOver = false;
-
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
@@ -72,16 +69,28 @@ public class PlayerController : MonoBehaviour
         if (IsLanding() == false && IsFalling == false)
         {
             finalVector = Vector3.zero;
+            moveVector = transform.forward * _InputManager.Vertical + transform.right * _InputManager.Horizontal;
+            moveVector.Normalize();
+            finalVector = moveVector;
+            if(IsMove)
+            {
+                _Rigidbody.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
+                transform.Rotate(transform.up * turnDirection * turnMultiplier * Time.deltaTime); // Rotate Character
+                focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
+            }
+            /*
             if (_InputManager.Horizontal != 0f) // Has Horizontal Movement
             {
-                rotateVector = transform.up * _InputManager.Horizontal;
+
                 if (_InputManager.Vertical >= 0f) // Only Forward And Stop + Horizontal
                 {
+                    rotateVector = transform.up * _InputManager.Horizontal;
                     finalVector += transform.forward;
                     //transform.position += moveSpeed * Time.deltaTime * transform.forward;
                 }
                 else // BackWard + Horizontal
                 {
+                    rotateVector = transform.up * -_InputManager.Horizontal;
                     finalVector += -transform.forward;//transform.position += moveSpeed * Time.deltaTime * -transform.forward;
                 }
 
@@ -99,7 +108,8 @@ public class PlayerController : MonoBehaviour
                 focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
             }
             finalVector.Normalize(); // Normalize movement vector
-            transform.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
+            _Rigidbody.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
+            */
         }
     }
     private bool IsGrounded()
@@ -175,26 +185,20 @@ public class PlayerController : MonoBehaviour
             }
             else if (_InputManager.Vertical > 0 && _InputManager.Sprint)
             {
-                moveSpeed += 0.03f;
+                moveSpeed += 0.05f;
                 if (moveSpeed > RunSpeed) moveSpeed = RunSpeed;
             }
-            else if (_InputManager.Vertical < 0 && _InputManager.Sprint == false)
+            else if (_InputManager.Vertical < 0)
             {
                 if(moveSpeed > BackSpeed)
                 {
-                    moveSpeed -= 0.03f;
-                    if (moveSpeed < BackSpeed) moveSpeed = BackSpeed;
+                    moveSpeed = BackSpeed;
                 }
                 else moveSpeed = BackSpeed;
             }
-            else if (_InputManager.Vertical < 0 && _InputManager.Sprint)
-            {
-                moveSpeed += 0.03f;
-                if (moveSpeed > RunBackSpeed) moveSpeed = RunBackSpeed;
-            }
             else if(_InputManager.Horizontal != 0)
             {
-                moveSpeed = 2f;
+                moveSpeed = WalkSpeed;
             }
             else
             {
@@ -228,23 +232,8 @@ public class PlayerController : MonoBehaviour
         _Animator.SetBool("IsGrounded", IsGrounded());
         _Animator.SetBool("IsFalling", IsFalling);
         //_Animator.SetFloat("Jump", _InputManager.Jump);
-        //_Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed < 2f);
+        _Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed >= 4f);
         _Animator.SetBool("Jump", _InputManager.Jump);
-        _Animator.SetBool("CanJumpOver", CanJumpOver);
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.CompareTag("Obstacle"))
-        {
-            CanJumpOver = true;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if(other.gameObject.CompareTag("Obstacle"))
-        {
-            CanJumpOver = false;
-        }
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

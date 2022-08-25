@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    protected Rigidbody rigidBody;
+    
 }
