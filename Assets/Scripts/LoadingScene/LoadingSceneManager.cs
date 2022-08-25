@@ -11,12 +11,17 @@ public class LoadingSceneManager : MonoBehaviour
     private void Awake()
     {
         loadingBar = GameObject.Find("LoadingBar").GetComponent<Image>();
+        loadingBar.fillAmount = 0f;
     }
-    private  IEnumerator Loading<T>(T SceneIndex) where T : struct
+    private void Start()
+    {
+        StartCoroutine(Loading("GameScene01"));
+    }
+    private  IEnumerator Loading(string SceneName)
     {
         float timer = 0f;
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(0);
+        AsyncOperation op = SceneManager.LoadSceneAsync(SceneName);
         op.allowSceneActivation = false;
 
         while(op.isDone == false)
