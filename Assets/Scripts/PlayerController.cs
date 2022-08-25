@@ -10,7 +10,9 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] private Rigidbody _Rigidbody;
 
     [HideInInspector] private Vector3 moveVector; // Desired Movement Vector
+    [HideInInspector] private Vector3 rotateVector; // Desired Rotation Vector
     [HideInInspector] private Vector3 relativeVector;
+    [HideInInspector] private Vector3 finalVector = Vector3.zero;
 
     private float moveSpeed = 0f;
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 2f;
@@ -59,20 +61,40 @@ public class PlayerController : MonoBehaviour
         MouseCamera();
         Jump();
     }
-    private void Movement()
+    private void Movement() // Character Movement And Rotation
     {
         if (IsLanding() == false)
         {
-            moveVector = transform.forward * _InputManager.Vertical + transform.right * _InputManager.Horizontal; // Calculate Vector
-            if (IsMove)
+            finalVector = Vector3.zero;
+            if (_InputManager.Horizontal != 0f) // Has Horizontal Movement
             {
-                transform.position += moveSpeed * Time.deltaTime * moveVector;
+                rotateVector = transform.up * _InputManager.Horizontal;
+                if (_InputManager.Vertical >= 0f) // Only Forward And Stop + Horizontal
+                {
+                    finalVector += transform.forward;
+                    //transform.position += moveSpeed * Time.deltaTime * transform.forward;
+                }
+                else // BackWard + Horizontal
+                {
+                    finalVector += -transform.forward;//transform.position += moveSpeed * Time.deltaTime * -transform.forward;
+                }
+
+                transform.Rotate(rotateVector * Time.deltaTime * turnMultiplier / 10); // Rotate Character by Horizontal Input
+                //focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
+            }
+
+            if (_InputManager.Vertical != 0f) // Has Forward And Backward Movement
+            {
+                moveVector = transform.forward * _InputManager.Vertical; // Calculate Vector
+                moveVector.Normalize();
+                finalVector += moveVector;
+                //transform.position += moveSpeed * Time.deltaTime * moveVector;
                 transform.Rotate(transform.up * turnDirection * turnMultiplier * Time.deltaTime); // Rotate Character
                 focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
             }
+            finalVector.Normalize(); // Normalize movement vector
+            transform.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
         }
-
-
     }
     private bool IsGrounded()
     {
@@ -126,6 +148,10 @@ public class PlayerController : MonoBehaviour
             {
                 moveSpeed += 0.03f;
                 if (moveSpeed > RunBackSpeed) moveSpeed = RunBackSpeed;
+            }
+            else if(_InputManager.Horizontal != 0 && _InputManager.Sprint == false)
+            {
+                moveSpeed = 2f;
             }
             else
             {
