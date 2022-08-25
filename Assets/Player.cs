@@ -19,6 +19,7 @@ public class Player : Actor
     private Transform upperSpine;
     private Transform Neck;
     private GameObject Head;
+    private GameObject CameraArm;
     #endregion
     private float currentVelocity = 0f;
     [SerializeField]
@@ -35,9 +36,12 @@ public class Player : Actor
     private float jumpPower = 10f;
 
     private Vector3 moveDir;
-    private Vector3 cameraDir;
-    private Quaternion cameraRot;
-    private Quaternion lastCameraRot;
+    private Vector3 relativeVec;
+    private float turnDir;
+
+    private Vector3 cameraForward;
+    private Vector3 cameraRight;
+
     private Vector3 LastMousePos;
 
     private Animator animator;
@@ -49,6 +53,7 @@ public class Player : Actor
         upperSpine = animator.GetBoneTransform(HumanBodyBones.UpperChest);
         Neck = animator.GetBoneTransform(HumanBodyBones.Neck);
         Head = GameObject.Find("bb_male_Neck");
+        CameraArm = GameObject.Find("CameraArm");
         Debug.Log(upperSpine.name);
         Debug.Log(Neck.name);
     }
@@ -67,13 +72,19 @@ public class Player : Actor
         AltInput = Input.GetKey(KeyCode.LeftAlt);
         MouseInput = Input.GetAxis("Mouse X") != 0f || Input.GetAxis("Mouse Y") != 0f;
 
-        moveDir = new Vector3(horizontal, 0f, vertical);
-        moveDir.Normalize();
-        cameraDir = Camera.main.transform.forward;
-        cameraDir.y = 0f;
-        cameraRot = Camera.main.transform.rotation;
-        cameraRot.x = 0f;
-        cameraRot.z = 0f;
+        cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0f;
+        cameraRight = Camera.main.transform.right;
+        cameraRight.y = 0f;
+        cameraRight.z = 0f;
+
+        moveDir = transform.forward * vertical + transform.right * horizontal;
+
+        relativeVec = transform.InverseTransformPoint(CameraArm.transform.position);
+        relativeVec /= relativeVec.magnitude;
+
+        turnDir = (relativeVec.x / relativeVec.magnitude);
+
         LastMousePos = Input.mousePosition;
 
         ChangeAnimation();
@@ -95,8 +106,10 @@ public class Player : Actor
     }
     private void Movement()
     {
+        Debug.DrawRay(Camera.main.transform.position, cameraForward * 4f, Color.red);
+        /*
         Debug.Log(IsStop);
-        Debug.DrawRay(Camera.main.transform.position, cameraDir * 4f, Color.red);
+        
         if (vertical > 0 && rigidBody.velocity.magnitude < 0.1f)
         {
             Debug.Log("Success");
@@ -104,19 +117,14 @@ public class Player : Actor
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(cameraDir), Time.deltaTime * 13f);
             transform.rotation = Quaternion.LookRotation(cameraDir);
         }
-        if (IsMove) // Camera stop
+        */
+        if (vertical > 0) // Camera stop
         {
-            rigidBody.velocity = transform.forward * currentVelocity;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * 13f);
-        }
-
-
-        if(IsMove == false)
-        {
-            rigidBody.velocity = Vector3.zero;
-        }
-
-
+            rigidBody.velocity = moveDir * currentVelocity;
+            //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * 15f);
+            transform.Rotate(transform.up * turnDir * rotateSpeed * Time.deltaTime);
+            CameraArm.transform.parent.Rotate(transform.up * -turnDir * rotateSpeed * Time.deltaTime);
+        }   
 
     }
     private IEnumerator PlayerVelocity()

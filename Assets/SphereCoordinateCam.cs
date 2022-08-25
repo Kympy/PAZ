@@ -82,23 +82,22 @@ public class SphereCoordinateCam : MonoBehaviour
 
     private void Start()
     {
-        target = GameObject.FindWithTag("Player");
+        target = GameObject.Find("CameraArm");
         sphere = new SphereCoordinate(transform.position);
         transform.position = sphere.SphereToCartesian + target.transform.position;
     }
     private void Update()
     {
-        //horizontal = Input.GetAxis("Horizontal");
+        horizontal = Input.GetAxis("Horizontal");
         //vertical = Input.GetAxis("Vertical");
 
         //HasMouseButton = Input.GetMouseButton(0) || Input.GetMouseButton(1) || Input.GetMouseButton(2);
-        //MouseX = HasMouseButton ? Input.GetAxis("Mouse X") : 0f;
-        //MouseY = HasMouseButton ? Input.GetAxis("Mouse Y") : 0f;
+        MouseX = -Input.GetAxis("Mouse X");
+        MouseY = -Input.GetAxis("Mouse Y");
 
-        //RealX = Mathf.Abs(horizontal) > Mathf.Abs(MouseX) ? horizontal : MouseX;
-        //RealY = Mathf.Abs(vertical) > Mathf.Abs(MouseY) ? vertical : MouseY;
-        RealX = -Input.GetAxis("Mouse X");
-        RealY = -Input.GetAxis("Mouse Y");
+        RealX = Mathf.Abs(horizontal) > Mathf.Abs(MouseX) ? horizontal : MouseX;
+        RealX = MouseX;
+        RealY = MouseY;
 
         transform.position = sphere.Rotate(RealX * rotationSpeed * Time.deltaTime,
              RealY * rotationSpeed * Time.deltaTime).SphereToCartesian + target.transform.position;
