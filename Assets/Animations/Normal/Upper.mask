@@ -1,0 +1,209 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Upper
+  m_Mask: 00000000010000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Geo
+    m_Weight: 1
+  - m_Path: Geo/bb_male_body
+    m_Weight: 1
+  - m_Path: Geo/bb_male_haircut
+    m_Weight: 1
+  - m_Path: Geo/hoodie_blue
+    m_Weight: 1
+  - m_Path: Geo/hoodie_blueWhite
+    m_Weight: 1
+  - m_Path: Geo/hoodie_grey
+    m_Weight: 1
+  - m_Path: Geo/jacket_hive
+    m_Weight: 1
+  - m_Path: Geo/male_tanktop_yellow
+    m_Weight: 1
+  - m_Path: Geo/shoe_low_white
+    m_Weight: 1
+  - m_Path: Geo/shoes_tall
+    m_Weight: 1
+  - m_Path: Geo/shoes_tall_turquoise
+    m_Weight: 1
+  - m_Path: Geo/shorts_black_cotton
+    m_Weight: 1
+  - m_Path: Geo/shorts_hive
+    m_Weight: 1
+  - m_Path: Geo/shorts_white
+    m_Weight: 1
+  - m_Path: Geo/sportpants_alt_black
+    m_Weight: 1
+  - m_Path: Geo/sportpants_blueWhite
+    m_Weight: 1
+  - m_Path: Geo/sportpants_grey
+    m_Weight: 1
+  - m_Path: Geo/sweatpants_black
+    m_Weight: 1
+  - m_Path: Geo/swimwear_granit
+    m_Weight: 1
+  - m_Path: Geo/tights_black
+    m_Weight: 1
+  - m_Path: Geo/tights_prints
+    m_Weight: 1
+  - m_Path: Geo/tshirt_white
+    m_Weight: 1
+  - m_Path: Geo/underpants_blue
+    m_Weight: 1
+  - m_Path: Geo/underpants_granit
+    m_Weight: 1
+  - m_Path: Geo/underwear_fishes
+    m_Weight: 1
+  - m_Path: Geo/underwear_hive
+    m_Weight: 1
+  - m_Path: Geo/underwear_tighty
+    m_Weight: 1
+  - m_Path: Geo/underwear_whiteBlue
+    m_Weight: 1
+  - m_Path: reference
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_LeftUpLeg
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_LeftUpLeg/bb_male_LeftLeg
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_LeftUpLeg/bb_male_LeftLeg/bb_male_LeftFoot
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_LeftUpLeg/bb_male_LeftLeg/bb_male_LeftFoot/bb_male_LeftToeBase
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_RightUpLeg
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_RightUpLeg/bb_male_RightLeg
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_RightUpLeg/bb_male_RightLeg/bb_male_RightFoot
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_RightUpLeg/bb_male_RightLeg/bb_male_RightFoot/bb_male_RightToeBase
+    m_Weight: 0
+  - m_Path: reference/bb_male_Hips/bb_male_Spine
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandIndex1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandIndex1/bb_male_LeftHandIndex2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandIndex1/bb_male_LeftHandIndex2/bb_male_LeftHandIndex3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandIndex1/bb_male_LeftHandIndex2/bb_male_LeftHandIndex3/polySurface171
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandMiddle1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandMiddle1/bb_male_LeftHandMiddle2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandMiddle1/bb_male_LeftHandMiddle2/bb_male_LeftHandMiddle3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandMiddle1/bb_male_LeftHandMiddle2/bb_male_LeftHandMiddle3/polySurface177
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandPinky1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandPinky1/bb_male_LeftHandPinky2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandPinky1/bb_male_LeftHandPinky2/bb_male_LeftHandPinky3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandPinky1/bb_male_LeftHandPinky2/bb_male_LeftHandPinky3/polySurface179
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandRing1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandRing1/bb_male_LeftHandRing2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandRing1/bb_male_LeftHandRing2/bb_male_LeftHandRing3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandRing1/bb_male_LeftHandRing2/bb_male_LeftHandRing3/polySurface178
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandThumb1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandThumb1/bb_male_LeftHandThumb2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandThumb1/bb_male_LeftHandThumb2/bb_male_LeftHandThumb3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/bb_male_LeftHandThumb1/bb_male_LeftHandThumb2/bb_male_LeftHandThumb3/polySurface172
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/polySurface173
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/polySurface174
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/polySurface175
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_LeftShoulder/bb_male_LeftArm/bb_male_LeftForeArm/bb_male_LeftForeArmRoll/bb_male_LeftHand/polySurface176
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_L_joint
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_L_joint/Eye_L
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_L_joint/pSphere2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_R_joint
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_R_joint/Eye_R
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_Neck/bb_male_Head/Eye_R_joint/pSphere1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandIndex1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandIndex1/bb_male_RightHandIndex2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandIndex1/bb_male_RightHandIndex2/bb_male_RightHandIndex3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandMiddle1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandMiddle1/bb_male_RightHandMiddle2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandMiddle1/bb_male_RightHandMiddle2/bb_male_RightHandMiddle3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandPinky1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandPinky1/bb_male_RightHandPinky2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandPinky1/bb_male_RightHandPinky2/bb_male_RightHandPinky3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandRing1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandRing1/bb_male_RightHandRing2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandRing1/bb_male_RightHandRing2/bb_male_RightHandRing3
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandThumb1
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandThumb1/bb_male_RightHandThumb2
+    m_Weight: 1
+  - m_Path: reference/bb_male_Hips/bb_male_Spine/bb_male_Spine1/bb_male_Spine2/bb_male_RightShoulder/bb_male_RightArm/bb_male_RightForeArm/bb_male_RightForeArmRoll/bb_male_RightHand/bb_male_RightHandThumb1/bb_male_RightHandThumb2/bb_male_RightHandThumb3
+    m_Weight: 1

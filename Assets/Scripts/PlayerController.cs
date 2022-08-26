@@ -28,19 +28,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 500f)] private float turnMultiplier = 100f;
 
     private GameObject focusPoint;
+    private GameObject myWeapon;
 
     private bool IsMove = false;
     private bool IsJump = false;
-    private bool IsSprint = false;
     private bool IsBrake = false;
     private bool IsFalling = false;
+    private bool IsAim = false;
+    private bool IsAttack = false;
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
 
-    private const float gravityForce = -9.8f;
     private WaitForSeconds oneSec = new WaitForSeconds(1f);
-    Vector3 playerVeolcity = Vector3.zero;
+
+
     private void Awake()
     {
         _InputManager = GetComponent<InputManager>();
@@ -50,6 +52,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         focusPoint = GameObject.Find("Focus");
+        myWeapon = GameObject.FindGameObjectWithTag("Weapon");
+        myWeapon.GetComponent<CapsuleCollider>().isTrigger = true;
         StartCoroutine(GetPlayerVelocity());
     }
     private void FixedUpdate()
@@ -60,9 +64,11 @@ public class PlayerController : MonoBehaviour
     {
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
         IsJump = _InputManager.Jump;
+        IsAim = _InputManager.AttackState;
         MouseCamera();
         AnimationPlay();
         Jump();
+        Axe();
     }
     private void Movement() // Character Movement And Rotation
     {
@@ -110,6 +116,14 @@ public class PlayerController : MonoBehaviour
             finalVector.Normalize(); // Normalize movement vector
             _Rigidbody.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
             */
+        }
+    }
+    private void Axe()
+    {
+        if(_InputManager.LeftClick)
+        {
+            IsAttack = true;
+            _Animator.SetTrigger("First");
         }
     }
     private bool IsGrounded()
@@ -210,7 +224,7 @@ public class PlayerController : MonoBehaviour
     }
     private void MouseCamera()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             CursorLocked = CursorLocked ? false : true;
         }
@@ -231,9 +245,17 @@ public class PlayerController : MonoBehaviour
         _Animator.SetBool("IsMove", IsMove);
         _Animator.SetBool("IsGrounded", IsGrounded());
         _Animator.SetBool("IsFalling", IsFalling);
-        //_Animator.SetFloat("Jump", _InputManager.Jump);
         _Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed >= 4f);
         _Animator.SetBool("Jump", _InputManager.Jump);
+        _Animator.SetBool("IsAim", IsAim);
+    }
+    private void AxeOn()
+    {
+        myWeapon.GetComponent<CapsuleCollider>().isTrigger = false;
+    }
+    private void AxeOff()
+    {
+        myWeapon.GetComponent<CapsuleCollider>().isTrigger = true;
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

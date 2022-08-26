@@ -397,7 +397,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8779883716965631814}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.67, y: 0, z: -3.97}
+  m_LocalPosition: {x: 0.37, y: -0.43, z: -3.43}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3825,7 +3825,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8779883718309931095}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3882,16 +3882,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99f223ad310fc449b1d459a5a60d30c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WalkSpeed: 2
+  WalkSpeed: 4
   RunSpeed: 8
-  BackSpeed: 2
-  RunBackSpeed: 4
+  BackSpeed: 4
   jumpPower: 5
   groundClearance: 0.25
   groundDistance: 0.25
   mouseSensitivity_X: 100
   mouseSensitivity_Y: 100
-  turnMultiplier: 300
+  turnMultiplier: 450
 --- !u!136 &8779883718309931438
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3915,8 +3914,8 @@ Rigidbody:
   m_GameObject: {fileID: 8779883718309931095}
   serializedVersion: 2
   m_Mass: 30
-  m_Drag: 0.01
-  m_AngularDrag: 10
+  m_Drag: 0.001
+  m_AngularDrag: 80
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
