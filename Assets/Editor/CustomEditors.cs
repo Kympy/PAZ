@@ -7,6 +7,7 @@ using UnityEditor;
 [CustomEditor(typeof(ZombieBase))]
 public class CustomEditors : Editor
 {
+#if UNITY_EDITOR
     public void OnSceneGUI()
     {
         ZombieBase fow = (ZombieBase)target;
@@ -19,12 +20,11 @@ public class CustomEditors : Editor
         Handles.DrawLine(fow.transform.position, fow.transform.position + viewAngleB * fow.ViewRadius);
 
         Handles.color = Color.red;
-        if(fow.VisibleTargets != null)
+        if(fow.VisibleTarget != null)
         {
-            Handles.DrawLine(fow.transform.position, fow.VisibleTargets.position);
+            Handles.DrawLine(fow.transform.position, fow.VisibleTarget.transform.position);
         }
 
     }
-
-
+#endif
 }

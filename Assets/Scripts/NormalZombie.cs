@@ -14,7 +14,19 @@ public class NormalZombie : ZombieBase
     }
     public override void InitStat()
     {
-        attackRange = 1f;
+        //View
+        ViewRadius = 12f;
+        ViewAngle = 360f;
+        // Range
+        attackRange = 2f;
+        _Agent.stoppingDistance = attackRange;
+        // Speed
         walkSpeed = 1f;
+        runSpeed = 5f;
+        rotateSpeed = 5f;
+        // Time
+        attackTime = new WaitForSeconds(4.7f);
+        hitFrontTime = new WaitForSeconds(1.2f);
+        hitBackTime = new WaitForSeconds(2.15f);
     }
 }
