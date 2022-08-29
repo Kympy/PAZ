@@ -19,13 +19,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
     [SerializeField, Range(0f, 50f)] private float BackSpeed = 4f;
 
-    [SerializeField, Range(0f, 100f)] private float jumpPower = 10f;
+    [SerializeField, Range(0f, 100f)] private float jumpPower = 5.5f;
     [SerializeField, Range(0f, 0.5f)] private float groundClearance = 0.25f;
     [SerializeField, Range(0f, 1f)] private float groundDistance = 0.25f;
     private float turnDirection = 0f;
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_X = 100f;
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_Y = 100f;
-    [SerializeField, Range(0f, 500f)] private float turnMultiplier = 100f;
+    [SerializeField, Range(0f, 500f)] private float turnMultiplier = 300f;
 
     private GameObject focusPoint;
     private GameObject myWeapon;

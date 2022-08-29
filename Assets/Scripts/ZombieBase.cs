@@ -178,9 +178,16 @@ public class ZombieBase : MonoBehaviour
                 NextState(State.Idle);
                 yield break;
             }
+            else
+            {
+                // Look Player
+                //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(visibleTarget.transform.position - transform.position), Time.deltaTime * 10f);
+                transform.LookAt(visibleTarget.transform);
+            }
+
             if ((visibleTarget.transform.position - transform.position).magnitude <= attackRange) // Player is in my attack range
             {
-                _Animator.SetTrigger("IsAttack");
+                _Animator.SetTrigger("IsAttack"); // Attack Animation
                 yield return attackTime;
                 Debug.Log("## 03 ATTACK / Name : " + this.name + " Attacked Player!!");
             }
