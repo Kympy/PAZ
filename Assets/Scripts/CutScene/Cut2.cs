@@ -46,7 +46,7 @@ public class Cut2 : MonoBehaviour
             }
             yield return null;
         }
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         StartCoroutine(TextDown());
     }
     private IEnumerator TextDown()
@@ -59,23 +59,15 @@ public class Cut2 : MonoBehaviour
             if (txt.alpha <= 0f) break;
             yield return null;
         }
+        yield return new WaitForSeconds(2f);
         StartCoroutine(PanelDown());
     }
     private IEnumerator PanelDown()
     {
         timer = 0f;
-        while(true)
-        {
-            timer += Time.deltaTime * 0.01f;
-            panel.color -= new Color(0f, 0f, 0f, timer);
+        panel.color = new Color(0f, 0f, 0f, 0f);
+        _Animator.speed = 1f;
 
-            if (panel.color.a <= 0f)
-            {
-                _Animator.speed = 1f;
-                break;
-            }
-            yield return null;
-        }
         yield return new WaitForSeconds(10f);
         StartCoroutine(PanelUp());
     }

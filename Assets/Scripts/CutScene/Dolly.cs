@@ -63,7 +63,7 @@ public class Dolly : MonoBehaviour
         StartCoroutine(TextCoroutine());
         StartCoroutine(LoadCut2());
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if(doLight)
         {
