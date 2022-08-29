@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LoadingSceneManager : MonoBehaviour
 {
     private Image loadingBar = null;
+    private string sceneName; // Desired scene name
 
     private void Awake()
     {
@@ -15,13 +16,20 @@ public class LoadingSceneManager : MonoBehaviour
     }
     private void Start()
     {
-        StartCoroutine(Loading("GameScene01"));
+        StartCoroutine(Loading());
     }
-    private  IEnumerator Loading(string SceneName)
+    private  IEnumerator Loading()
     {
-        float timer = 0f;
+        sceneName = GameManager.Instance.LoadSceneName;
 
-        AsyncOperation op = SceneManager.LoadSceneAsync(SceneName);
+        if(sceneName == "")
+        {
+            Debug.LogError("There's no scene name to load.");
+            yield break;
+        }
+
+        float timer = 0f;
+        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
 
         while(op.isDone == false)

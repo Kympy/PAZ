@@ -15,6 +15,7 @@ public class ZombieBase : MonoBehaviour
         Hit,
         BackHit,
         Death,
+        BackDeath,
 
         MAX
     }
@@ -210,6 +211,13 @@ public class ZombieBase : MonoBehaviour
     public IEnumerator Death_State()
     {
         _Agent.enabled = false;
+        _Animator.SetTrigger("DeathForward");
+        yield return null;
+    }
+    public IEnumerator BackDeath_State() 
+    {
+        _Agent.enabled = false;
+        _Animator.SetTrigger("DeathBackward");
         yield return null;
     }
     public void OnAttackEvent()
@@ -220,15 +228,17 @@ public class ZombieBase : MonoBehaviour
     {
         //NextState(State.Idle);
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision) // Collision by Axe
     {
         if (collision.gameObject.CompareTag("Weapon") && collision.contacts[0].normal.normalized.z >= 0)
         {
-            NextState(State.Hit);
+            NextState(State.Death); // Forward Death Animation
+            //NextState(State.Death);
         }
         else if (collision.gameObject.CompareTag("Weapon") && collision.contacts[0].normal.normalized.z < 0)
         {
-            NextState(State.BackHit);
+            NextState(State.BackDeath); // Backward Death Animation
+            //NextState(State.BackHit);
         }
     }
     private void FindVisibleTarget()

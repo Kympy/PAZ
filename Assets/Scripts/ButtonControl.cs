@@ -22,6 +22,7 @@ public class ButtonControl : MonoBehaviour
     }
     private void GameScene()
     {
+        GameManager.Instance.LoadSceneName = "CutScene";
         SceneManager.LoadScene("LoadingScene");
     }
     private void ExitGame()
