@@ -13,13 +13,16 @@ public class InputManager : MonoBehaviour
     [HideInInspector] private bool sprint = false; // Run
     [HideInInspector] private bool brake = false; // Stop Run
 
-    private bool attackState = false;
     private bool leftClick = false;
+    private bool leftClicking = false;
+    private bool rightClicking = false;
 
-    private bool punch = false;
-    private bool axe = false;
-    private bool pistol = false;
-    private bool gun = false;
+    private bool EKey = false;
+    private bool reload = false;
+
+    private bool Slot_1 = false;
+    private bool Slot_2 = false;
+    private bool Slot_3 = false;
 
     private bool hasVerticalInput = false;
     private bool hasHorizontalInput = false;
@@ -29,12 +32,16 @@ public class InputManager : MonoBehaviour
     public bool Jump { get { return jump; } }
     public bool Sprint { get { return sprint; } }
     public bool Brake { get { return brake; } }
-
-    public bool AttackState { get { return attackState; } }
     public bool LeftClick { get { return leftClick; } }
 
-    public bool Punch { get { return punch; } }
-    public bool Axe { get { return axe; } }
+    public bool LeftCliking { get { return leftClicking; } }
+    public bool RightClicking { get { return rightClicking; } }
+    public bool E { get { return EKey; } }
+    public bool Reload { get { return reload; } }
+
+    public bool Slot1 { get { return Slot_1; } }
+    public bool Slot2 { get { return Slot_2; } }
+    public bool Slot3 { get { return Slot_3; } }
     public bool HasVerticalInput { get { return hasVerticalInput; } }
     public bool HasHorizontalInput { get { return hasHorizontalInput; } }
 
@@ -57,11 +64,16 @@ public class InputManager : MonoBehaviour
         sprint = Input.GetKey(KeyCode.LeftShift);
         brake = Input.GetKeyUp(KeyCode.LeftShift);
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            attackState = !attackState;
-        }
+        Slot_1 = Input.GetKeyDown(KeyCode.Alpha1);
+        Slot_2 = Input.GetKeyDown(KeyCode.Alpha2);
+        Slot_3 = Input.GetKeyDown(KeyCode.Alpha3);
+
+        EKey = Input.GetKeyDown(KeyCode.E);
+        reload = Input.GetKeyDown(KeyCode.R);
+
         leftClick = Input.GetMouseButtonDown(0);
+        leftClicking = Input.GetMouseButton(0);
+        rightClicking = Input.GetMouseButton(1);
 
         hasVerticalInput = !Mathf.Approximately(vertical, 0f);
         hasHorizontalInput = !Mathf.Approximately(horizontal, 0f);

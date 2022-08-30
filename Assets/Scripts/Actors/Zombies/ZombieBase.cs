@@ -249,15 +249,16 @@ public class ZombieBase : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision) // Collision by Axe
     {
-        if (collision.gameObject.CompareTag("Weapon") && collision.contacts[0].normal.normalized.z >= 0)
+        if (collision.gameObject.CompareTag("RealAxe"))
         {
-            NextState(State.Death); // Forward Death Animation
-            //NextState(State.Death);
-        }
-        else if (collision.gameObject.CompareTag("Weapon") && collision.contacts[0].normal.normalized.z < 0)
-        {
-            NextState(State.BackDeath); // Backward Death Animation
-            //NextState(State.BackHit);
+            if(collision.contacts[0].normal.normalized.z >= 0)
+            {
+                NextState(State.Death); // Forward Death Animation
+            }
+            else
+            {
+                NextState(State.BackDeath); // Backward Death Animation
+            }
         }
     }
     private void FindVisibleTarget()

@@ -7,6 +7,14 @@ TagManager:
   - Obstacle
   - StartPosition
   - Weapon
+  - FakeAxe
+  - FakeGun
+  - RealGun
+  - RealAxe
+  - DropGun
+  - DropHealth
+  - GunPos
+  - AxePos
   layers:
   - Default
   - TransparentFX
@@ -18,7 +26,7 @@ TagManager:
   - Terrain
   - Enemy
   - IgnorePhysics
-  - 
+  - Props
   - 
   - 
   - 

@@ -15,6 +15,11 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] private Vector3 finalVector = Vector3.zero;
 
     private float moveSpeed = 0f;
+    private float turnDirection = 0f;
+    private int bulletCount = 30;
+    private const int maxBulletCount = 30;
+    private int haveBulletCount = 0;
+
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 4f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
     [SerializeField, Range(0f, 50f)] private float BackSpeed = 4f;
@@ -22,38 +27,60 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 100f)] private float jumpPower = 5.5f;
     [SerializeField, Range(0f, 0.5f)] private float groundClearance = 0.25f;
     [SerializeField, Range(0f, 1f)] private float groundDistance = 0.25f;
-    private float turnDirection = 0f;
+
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_X = 100f;
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_Y = 100f;
     [SerializeField, Range(0f, 500f)] private float turnMultiplier = 300f;
+    [SerializeField, Range(0f, 1000f)] private float gunRange = 500f;
+    
 
     private GameObject focusPoint;
-    private GameObject myWeapon;
+    private GameObject realAxe = null;
+    private GameObject realGun = null;
+    private Transform GunPos = null;
+    private GameObject fakeAxe = null;
+    private GameObject fakeGun = null;
+
+    private GameObject AimedItem = null;
 
     private bool IsMove = false;
     private bool IsJump = false;
-    private bool IsBrake = false;
     private bool IsFalling = false;
     private bool IsAim = false;
-    private bool IsAttack = false;
+    private bool IsGun = false;
+    private bool IsFire = false;
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
 
     private WaitForSeconds oneSec = new WaitForSeconds(1f);
 
+    private RaycastHit hit; // temp hit
 
     private void Awake()
     {
         _InputManager = GetComponent<InputManager>();
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
+
+        fakeAxe = GameObject.FindGameObjectWithTag("FakeAxe");
+        fakeGun = GameObject.FindGameObjectWithTag("FakeGun");
+
+        realAxe = GameObject.FindGameObjectWithTag("RealAxe");
+        realAxe.GetComponent<CapsuleCollider>().isTrigger = true;
+
+        realGun = GameObject.FindGameObjectWithTag("RealGun");
+        realGun.SetActive(false);
+
+        fakeGun.SetActive(false);
+        fakeAxe.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
     private void Start()
     {
         focusPoint = GameObject.Find("Focus");
-        myWeapon = GameObject.FindGameObjectWithTag("Weapon");
-        myWeapon.GetComponent<CapsuleCollider>().isTrigger = true;
+
         StartCoroutine(GetPlayerVelocity());
     }
     private void FixedUpdate()
@@ -64,11 +91,16 @@ public class PlayerController : MonoBehaviour
     {
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
         IsJump = _InputManager.Jump;
-        IsAim = _InputManager.AttackState;
-        MouseCamera();
-        AnimationPlay();
+        IsAim = _InputManager.RightClicking;
+
         Jump();
         Axe();
+        Fire();
+        Reload();
+        MouseCamera();
+
+        SlotChange();
+        AnimationPlay();
     }
     private void Movement() // Character Movement And Rotation
     {
@@ -122,7 +154,6 @@ public class PlayerController : MonoBehaviour
     {
         if(_InputManager.LeftClick)
         {
-            IsAttack = true;
             _Animator.SetTrigger("First");
         }
     }
@@ -243,17 +274,106 @@ public class PlayerController : MonoBehaviour
         _Animator.SetBool("IsMove", IsMove);
         _Animator.SetBool("IsGrounded", IsGrounded());
         _Animator.SetBool("IsFalling", IsFalling);
-        _Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed >= 4f);
+        //_Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed >= 4f);
         _Animator.SetBool("Jump", _InputManager.Jump);
         _Animator.SetBool("IsAim", IsAim);
+        _Animator.SetBool("IsGun", IsGun);
+        _Animator.SetBool("IsFire", IsFire);
     }
     private void AxeOn()
     {
-        myWeapon.GetComponent<CapsuleCollider>().isTrigger = false;
+        realAxe.GetComponent<CapsuleCollider>().isTrigger = false;
     }
     private void AxeOff()
     {
-        myWeapon.GetComponent<CapsuleCollider>().isTrigger = true;
+        realAxe.GetComponent<CapsuleCollider>().isTrigger = true;
+    }
+    
+    private void Fire()
+    {
+        if(IsGun && _InputManager.LeftCliking && bulletCount > 0)
+        {
+            IsFire = true;
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * gunRange, Color.red);
+            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, gunRange))
+            {
+                if(hit.transform.CompareTag("Enemy"))
+                {
+
+                }
+            }
+        }
+        else
+        {
+            IsFire = false;
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 10f, Color.green);
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))
+            {
+
+                if(_InputManager.E)
+                {
+                    Debug.Log(hit.transform.name);
+                    if (hit.transform.CompareTag("DropGun"))
+                    {
+                        GunMode();
+                        Destroy(hit.transform.gameObject);
+                    }
+                }
+            }
+        }
+    }
+    private void Reload()
+    {
+        if(_InputManager.Reload)
+        {
+            _Animator.SetTrigger("IsReload");
+        }
+    }
+    private void OnReloadEvent()
+    {
+        int need = maxBulletCount - bulletCount;
+        if(need <= haveBulletCount) // I have enough bullets
+        {
+            bulletCount += need;
+            haveBulletCount -= need;
+        }
+        else // I have not enough bullets
+        {
+            bulletCount += haveBulletCount;
+            haveBulletCount = 0;
+        }
+    }
+    private void SlotChange()
+    {
+        if(_InputManager.Slot1 && IsGun == false) // Not equip gun, Have gun
+        {
+            GunMode();
+        }
+        else if(_InputManager.Slot2 && IsGun == true) // Equip Axe
+        {
+            AxeMode();
+        }
+
+    }
+    private void GunMode()
+    {
+        IsGun = true;
+
+        realGun.SetActive(true);
+        realAxe.SetActive(false);
+
+        fakeGun.SetActive(false);
+        fakeAxe.SetActive(true);
+    }
+    private void AxeMode()
+    {
+        IsGun = false;
+
+        realGun.SetActive(false);
+        realAxe.SetActive(true);
+
+        fakeGun.SetActive(true);
+        fakeAxe.SetActive(false);
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()
