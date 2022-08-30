@@ -3,8 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New ResourceDataObj", menuName = "ScriptableObjects/ResourceDataObj", order = 1)]
-public class ResourceDataObj : Singleton<ResourceDataObj>
+public class ResourceDataObj : ScriptableObject
 {
+    private static ResourceDataObj _instance = null;
+    public static ResourceDataObj Instance
+    {
+        get
+        {
+            if(_instance == null)
+            {
+                _instance = ScriptableObject.CreateInstance<ResourceDataObj>();
+            }
+            return _instance;
+        }
+    }
     public GameObject Player = null;
 
     public GameObject NormalZombie = null;
@@ -17,9 +29,8 @@ public class ResourceDataObj : Singleton<ResourceDataObj>
 
     public GameObject HealthPack = null;
 
-    public override void Awake()
+    private void Awake()
     {
-        base.Awake();
         Player = Resources.Load<GameObject>("PlayerPrefab/Player");
         NormalZombie = Resources.Load<GameObject>("NormalZombiePrefab/NormalZombie");
 

@@ -280,6 +280,10 @@ public class PlayerController : MonoBehaviour
         _Animator.SetBool("IsGun", IsGun);
         _Animator.SetBool("IsFire", IsFire);
     }
+    private void ResetLegMovement()
+    {
+        _Animator.SetTrigger("ResetLower");
+    }
     private void AxeOn()
     {
         realAxe.GetComponent<CapsuleCollider>().isTrigger = false;
