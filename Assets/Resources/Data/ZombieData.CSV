@@ -1,4 +1,4 @@
-Name,AttackPower,MaxHP
-Normal,50,2000
-Speed,60,1000
-Power,30,3000
+Name,AttackPower,MaxHP,AttackRange,ViewRadius,ViewAngle,WalkSpeed,RunSpeed
+Normal,50,2000,2,20,360,1,5
+Ghoul,60,1000,2,35,360,7,7
+Power,30,3000,4,15,180,1,2

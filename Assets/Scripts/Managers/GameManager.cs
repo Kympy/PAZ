@@ -13,5 +13,7 @@ public class GameManager : Singleton<GameManager>
     public override void Awake()
     {
         base.Awake();
+        DataManager.Instance.Awake();
+        ZombiePool.Instance.Awake();
     }
 }

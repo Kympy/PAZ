@@ -49,7 +49,7 @@ public class Dolly : MonoBehaviour
         center = GameObject.Find("CenterText").GetComponent<TextMeshProUGUI>();
         bottom = GameObject.Find("BottomText").GetComponent<TextMeshProUGUI>();
 
-        blood = Resources.Load<GameObject>("Blood");
+        blood = ResourceDataObj.Instance.Blood;
         Crate = GameObject.Find("Crate");
         cell = GameObject.Find("Cell").GetComponentInChildren<Light>();
         panel = GameObject.Find("Panel").GetComponent<Image>();

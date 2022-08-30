@@ -4,25 +4,18 @@ using UnityEngine;
 
 public struct ZombieData
 {
-    public string name;
-    public int attackPower;
-    public int MaxHP;
+    public string Name;
+    public float AttackPower;
+    public float MaxHP;
+    public float AttackRange;
+    public float ViewRadius;
+    public float ViewAngle;
+    public float WalkSpeed;
+    public float RunSpeed;
 }
 
-public class DataManager
+public class DataManager : Singleton<DataManager>
 {
-    private static DataManager _inst;
-    public static DataManager Inst
-    {
-        get
-        {
-            if(_inst == null)
-            {
-                _inst = new DataManager();
-            }
-            return _inst;
-        }
-    }
     private const string CRLF = "\r\n";
     private string[] tempColumns;
 
@@ -30,7 +23,13 @@ public class DataManager
 
     private ZombieData ZD = new ZombieData();
 
-    public void LoadGameData()
+    public override void Awake()
+    {
+        Debug.LogWarning("@@ : Data Manager Awake");
+        base.Awake();
+        LoadGameData();
+    }
+    private void LoadGameData()
     {
         LoadZombieData();
     }
@@ -44,16 +43,21 @@ public class DataManager
         {
             tempColumns = lines[i].Split(',');
 
-            ZD.name = tempColumns[0];
-            ZD.attackPower = int.Parse(tempColumns[1]);
-            ZD.MaxHP = int.Parse(tempColumns[2]);
+            ZD.Name = tempColumns[0];
+            ZD.AttackPower = float.Parse(tempColumns[1]);
+            ZD.MaxHP = float.Parse(tempColumns[2]);
+            ZD.AttackRange = float.Parse(tempColumns[3]);
+            ZD.ViewRadius = float.Parse(tempColumns[4]);
+            ZD.ViewAngle = float.Parse(tempColumns[5]);
+            ZD.WalkSpeed = float.Parse(tempColumns[6]);
+            ZD.RunSpeed = float.Parse(tempColumns[7]);
 
             ZombieDataList.Add(ZD);
         }
     }
     public ZombieData GetZombieData(string name)
     {
-        return ZombieDataList.Find(ZombieData => ZombieData.name == name);
+        return ZombieDataList.Find(ZombieData => ZombieData.Name == name);
     }
     #endregion
 }
