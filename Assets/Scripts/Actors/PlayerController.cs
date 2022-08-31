@@ -236,36 +236,43 @@ public class PlayerController : MonoBehaviour
     {
         while(true)
         {
-            if (_InputManager.Vertical > 0 && _InputManager.Sprint == false)
-            {
-                if(moveSpeed > WalkSpeed)
-                {
-                    moveSpeed -= 0.03f;
-                    if (moveSpeed < WalkSpeed) moveSpeed = WalkSpeed;
-                }
-                else moveSpeed = WalkSpeed;
-            }
-            else if (_InputManager.Vertical > 0 && _InputManager.Sprint)
-            {
-                moveSpeed += 0.05f;
-                if (moveSpeed > RunSpeed) moveSpeed = RunSpeed;
-            }
-            else if (_InputManager.Vertical < 0)
-            {
-                if(moveSpeed > BackSpeed)
-                {
-                    moveSpeed = BackSpeed;
-                }
-                else moveSpeed = BackSpeed;
-            }
-            else if(_InputManager.Horizontal != 0)
+            if(IsAim) // When aiming, only can walk
             {
                 moveSpeed = WalkSpeed;
             }
-            else
+            else // Not aiming can run
             {
-                moveSpeed -= 0.03f;
-                if (moveSpeed < 0f) moveSpeed = 0f;
+                if (_InputManager.Vertical > 0 && _InputManager.Sprint == false)
+                {
+                    if (moveSpeed > WalkSpeed)
+                    {
+                        moveSpeed -= 0.03f;
+                        if (moveSpeed < WalkSpeed) moveSpeed = WalkSpeed;
+                    }
+                    else moveSpeed = WalkSpeed;
+                }
+                else if (_InputManager.Vertical > 0 && _InputManager.Sprint)
+                {
+                    moveSpeed += 0.05f;
+                    if (moveSpeed > RunSpeed) moveSpeed = RunSpeed;
+                }
+                else if (_InputManager.Vertical < 0)
+                {
+                    if (moveSpeed > BackSpeed)
+                    {
+                        moveSpeed = BackSpeed;
+                    }
+                    else moveSpeed = BackSpeed;
+                }
+                else if (_InputManager.Horizontal != 0)
+                {
+                    moveSpeed = WalkSpeed;
+                }
+                else
+                {
+                    moveSpeed -= 0.03f;
+                    if (moveSpeed < 0f) moveSpeed = 0f;
+                }
             }
             yield return null;
         }
