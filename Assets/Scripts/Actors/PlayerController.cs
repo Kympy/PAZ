@@ -14,9 +14,11 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] private Vector3 relativeVector;
     [HideInInspector] private Vector3 finalVector = Vector3.zero;
 
-    private float moveSpeed = 0f;
-    private float turnDirection = 0f;
-    private int bulletCount = 30;
+    private float moveSpeed = 0f; // Use to walk and run speed
+    private float turnDirection = 0f; // Use to rotate character
+    private float fireTimer = 0f; // Fire timer
+    private const float fireTime = 0.6f; // My gun fire rate
+    private int bulletCount = 30; // current Ammo count
     private const int maxBulletCount = 30;
     private int haveBulletCount = 0;
 
@@ -34,14 +36,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 1000f)] private float gunRange = 500f;
     
 
-    private GameObject focusPoint;
+    private GameObject focusPoint; // Camera point
+    // Hand
     private GameObject realAxe = null;
     private GameObject realGun = null;
-    private Transform GunPos = null;
+    // Back
     private GameObject fakeAxe = null;
     private GameObject fakeGun = null;
-
-    private GameObject AimedItem = null;
+    // Muzzle effect
+    private GameObject muzzleEffect = null;
 
     private bool IsMove = false;
     private bool IsJump = false;
@@ -55,7 +58,9 @@ public class PlayerController : MonoBehaviour
 
     private WaitForSeconds oneSec = new WaitForSeconds(1f);
 
+    // temp
     private RaycastHit hit; // temp hit
+    private float xRotate;
 
     private void Awake()
     {
@@ -70,11 +75,14 @@ public class PlayerController : MonoBehaviour
         realAxe.GetComponent<CapsuleCollider>().isTrigger = true;
 
         realGun = GameObject.FindGameObjectWithTag("RealGun");
-        realGun.SetActive(false);
 
         fakeGun.SetActive(false);
         fakeAxe.SetActive(false);
 
+        muzzleEffect = GameObject.FindGameObjectWithTag("Muzzle");
+
+        muzzleEffect.SetActive(false);
+        realGun.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
     }
     private void Start()
@@ -262,8 +270,13 @@ public class PlayerController : MonoBehaviour
         relativeVector = transform.InverseTransformPoint(focusPoint.transform.position);
         relativeVector /= relativeVector.magnitude;
         turnDirection = (relativeVector.x / relativeVector.magnitude);
+
+        xRotate = focusPoint.transform.localEulerAngles.x - Input.GetAxis("Mouse Y"); // Get X rotate
+        xRotate = xRotate > 180 ? xRotate - 360 : xRotate; // Get X rotate when x have minus value
+        xRotate = Mathf.Clamp(xRotate, -25, 60); // Clamp angles
         // Vertical
-        focusPoint.transform.eulerAngles = new Vector3(focusPoint.transform.eulerAngles.x + -Input.GetAxis("Mouse Y"), focusPoint.transform.eulerAngles.y, 0f);
+        focusPoint.transform.eulerAngles = new Vector3(xRotate, focusPoint.transform.eulerAngles.y, 0f);
+        
         // Horizontal
         focusPoint.transform.parent.Rotate(transform.up * Input.GetAxis("Mouse X") * mouseSensitivity_X * Time.deltaTime);
     }
@@ -274,7 +287,6 @@ public class PlayerController : MonoBehaviour
         _Animator.SetBool("IsMove", IsMove);
         _Animator.SetBool("IsGrounded", IsGrounded());
         _Animator.SetBool("IsFalling", IsFalling);
-        //_Animator.SetBool("IsBrake", _InputManager.Brake && moveSpeed >= 4f);
         _Animator.SetBool("Jump", _InputManager.Jump);
         _Animator.SetBool("IsAim", IsAim);
         _Animator.SetBool("IsGun", IsGun);
@@ -297,30 +309,44 @@ public class PlayerController : MonoBehaviour
     {
         if(IsGun && _InputManager.LeftCliking && bulletCount > 0)
         {
-            IsFire = true;
-            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * gunRange, Color.red);
-            if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, gunRange))
+            fireTimer = fireTime; // First shot
+            fireTimer += Time.deltaTime; // timer Start
+            if(fireTimer >= fireTime) // Satisfied fire rate
             {
-                if(hit.transform.CompareTag("Enemy"))
+                fireTimer = 0f; // reset
+                muzzleEffect.SetActive(true); // show muzzle
+                IsFire = true; // Animation
+                Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * gunRange, Color.red);
+                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, gunRange)) // Shoot ray
                 {
-
+                    if (hit.transform.CompareTag("Enemy")) // Zombie ?
+                    {
+                        EffectPool.Instance.GetEffect("Blood").transform.position = hit.point;
+                        hit.transform.gameObject.GetComponent<ZombieBase>().NextState(ZombieBase.State.GunHit); // Give damage
+                    }
+                    else
+                    {
+                        EffectPool.Instance.GetEffect("Normal").transform.position = hit.point;
+                        return;
+                    }
                 }
             }
         }
         else
         {
+            muzzleEffect.SetActive(false); // hide muzzle
             IsFire = false;
             Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 10f, Color.green);
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))
             {
 
-                if(_InputManager.E)
+                if(_InputManager.E) // Get
                 {
                     Debug.Log(hit.transform.name);
-                    if (hit.transform.CompareTag("DropGun"))
+                    if (hit.transform.CompareTag("DropGun")) // Is gun?
                     {
-                        GunMode();
-                        Destroy(hit.transform.gameObject);
+                        GunMode(); // Change mode
+                        Destroy(hit.transform.gameObject); // destroy grounded prop
                     }
                 }
             }
@@ -328,14 +354,14 @@ public class PlayerController : MonoBehaviour
     }
     private void Reload()
     {
-        if(_InputManager.Reload)
+        if(_InputManager.Reload) // Input R
         {
-            _Animator.SetTrigger("IsReload");
+            _Animator.SetTrigger("IsReload"); // reload animation
         }
     }
-    private void OnReloadEvent()
+    private void OnReloadEvent() // When start reload animation ends
     {
-        int need = maxBulletCount - bulletCount;
+        int need = maxBulletCount - bulletCount; // How many bullets I need?
         if(need <= haveBulletCount) // I have enough bullets
         {
             bulletCount += need;
@@ -347,7 +373,7 @@ public class PlayerController : MonoBehaviour
             haveBulletCount = 0;
         }
     }
-    private void SlotChange()
+    private void SlotChange() // Num1 Num2
     {
         if(_InputManager.Slot1 && IsGun == false) // Not equip gun, Have gun
         {
@@ -364,6 +390,7 @@ public class PlayerController : MonoBehaviour
         IsGun = true;
 
         realGun.SetActive(true);
+        muzzleEffect.SetActive(false);
         realAxe.SetActive(false);
 
         fakeGun.SetActive(false);

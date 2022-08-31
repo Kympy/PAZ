@@ -16,5 +16,6 @@ public class GameManager : Singleton<GameManager>
         base.Awake();
         DataManager.Instance.Awake();
         ZombiePool.Instance.Awake();
+        EffectPool.Instance.Awake();
     }
 }

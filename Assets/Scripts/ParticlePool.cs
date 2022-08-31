@@ -5,8 +5,8 @@ using UnityEngine.Pool;
 
 public class ParticlePool : MonoBehaviour
 {
-    private ObjectPool<GameObject> pool;
-
+    private ObjectPool<GameObject> pool = null;
+    
     public IObjectPool<GameObject> Pool
     {
         get
@@ -21,22 +21,21 @@ public class ParticlePool : MonoBehaviour
     // Create Object
     private GameObject Create()
     {
-        GameObject prefab = null;
-        GameObject obj = Instantiate(prefab);
+        GameObject obj = Instantiate(ResourceDataObj.Instance.BulletHit);
         return obj;
     }
     // Activate Object
-    private void GetObject(GameObject obj)
+    public void GetObject(GameObject obj)
     {
         obj.SetActive(true);
     }
     // Deactivate Object
-    private void ReturnObject(GameObject obj)
+    public void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
     }
     // Destroy Object
-    private void DestroyObject(GameObject obj)
+    public void DestroyObject(GameObject obj)
     {
         Destroy(obj);
     }

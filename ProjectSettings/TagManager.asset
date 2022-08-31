@@ -15,6 +15,9 @@ TagManager:
   - DropHealth
   - GunPos
   - AxePos
+  - FxTemporaire
+  - Muzzle
+  - Enemy
   layers:
   - Default
   - TransparentFX

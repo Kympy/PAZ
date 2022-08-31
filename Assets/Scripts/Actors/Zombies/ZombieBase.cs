@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class ZombieBase : MonoBehaviour
 {
+    public delegate void DecreaseHP();
+    public DecreaseHP decreaseHP;
     public enum State
     {
         Null,
@@ -12,6 +14,7 @@ public class ZombieBase : MonoBehaviour
         Scream,
         Move,
         Attack,
+        GunHit,
         Hit,
         BackHit,
         Death,
@@ -19,13 +22,13 @@ public class ZombieBase : MonoBehaviour
 
         MAX
     }
-    [HideInInspector] public string MyName = "";
-    protected float currentHP;
-    protected float MaxHP;
-    protected float walkSpeed;
-    protected float runSpeed;
-    protected float attackPower;
-    protected float jumpPower;
+    public string MyName = "";
+    [SerializeField]protected float currentHP;
+    [SerializeField] protected float MaxHP;
+    [SerializeField] protected float walkSpeed;
+    [SerializeField] protected float runSpeed;
+    [SerializeField] protected float attackPower;
+    [SerializeField] protected float jumpPower;
 
     protected float attackRange;
     protected float rotateSpeed;
@@ -47,6 +50,7 @@ public class ZombieBase : MonoBehaviour
     protected WaitForSeconds hitBackTime;
     protected WaitForSeconds hitFrontTime;
     protected WaitForSeconds deadBodyTime = new WaitForSeconds(7f);
+    protected WaitForSeconds gunHitTime = new WaitForSeconds(0.5f);
     protected const float moveOffset = 10f; // Move position random range
     protected Vector3 desiredPos;
 
@@ -73,7 +77,12 @@ public class ZombieBase : MonoBehaviour
     private Transform targetTransform;
     private Vector3 dir2Target;
     private float distance2Target;
-
+    private void OnEnable()
+    {
+        _Rigidbody.useGravity = true;
+        this.GetComponent<Collider>().enabled = true;
+        currentHP = MaxHP;
+    }
     public virtual void Awake()
     {
         _Agent = GetComponent<NavMeshAgent>();
@@ -84,9 +93,11 @@ public class ZombieBase : MonoBehaviour
     }
     public virtual void Start()
     {
+        decreaseHP += GunDamage;
+        decreaseHP += Die;
         NextState(State.Idle);
     }
-    public virtual void InitData(ZombieData myData)
+    public virtual void InitData(ZombieData myData) // Get Data
     {
         MyName = myData.Name;
         attackPower = myData.AttackPower;
@@ -94,14 +105,20 @@ public class ZombieBase : MonoBehaviour
         currentHP = MaxHP;
         attackRange = myData.AttackRange;
         viewRadius = myData.ViewRadius;
-        Debug.Log(viewRadius);
         viewAngle = myData.ViewAngle;
         walkSpeed = myData.WalkSpeed;
         runSpeed = myData.RunSpeed;
     }
-    public void DecreaseHP(float Damage)
+    public void GunDamage()
     {
-        currentHP -= Damage;
+        currentHP -= 200f;
+    }
+    public void Die()
+    {
+        if(currentHP <= 0)
+        {
+            NextState(State.Death);
+        }
     }
     public void NextState(State NewState) // Get Next Coroutine
     {
@@ -191,8 +208,8 @@ public class ZombieBase : MonoBehaviour
             else
             {
                 // Look Player
-                //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(visibleTarget.transform.position - transform.position), Time.deltaTime * 10f);
-                transform.LookAt(visibleTarget.transform);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(visibleTarget.transform.position - transform.position), 0.5f);
+                //transform.LookAt(visibleTarget.transform);
             }
 
             if ((visibleTarget.transform.position - transform.position).magnitude <= attackRange) // Player is in my attack range
@@ -225,9 +242,33 @@ public class ZombieBase : MonoBehaviour
         yield return hitFrontTime;
         NextState(State.Idle);
     }
+    public IEnumerator GunHit_State()
+    {
+        if (currentHP > 0)
+        {
+            StopAgent();
+            GunDamage();
+            _Animator.SetTrigger("GunHit");
+            yield return gunHitTime;
+
+            if (visibleTarget != null)
+            {
+                _Animator.SetTrigger("GoMove");
+                NextState(State.Move);
+            }
+            else
+            {
+                _Animator.SetTrigger("GoIdle");
+                NextState(State.Idle);
+            }
+        }
+        else NextState(State.Death);
+    }
     public IEnumerator Death_State()
     {
         StopAgent();
+        _Rigidbody.useGravity = false;
+        this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathForward");
         yield return deadBodyTime;
         ZombiePool.Instance.ReturnZombie(this);
@@ -235,6 +276,8 @@ public class ZombieBase : MonoBehaviour
     public IEnumerator BackDeath_State() 
     {
         StopAgent();
+        _Rigidbody.useGravity = false;
+        this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathBackward");
         yield return deadBodyTime;
         ZombiePool.Instance.ReturnZombie(this);

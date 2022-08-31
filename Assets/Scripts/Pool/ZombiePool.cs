@@ -16,7 +16,6 @@ public class ZombiePool : Singleton<ZombiePool>
     public override void Awake()
     {
         Debug.LogWarning("@@ : Zombie Pool Awake");
-        base.Awake();
         NormalPrefab = ResourceDataObj.Instance.NormalZombie.GetComponent<NormalZombie>();
 
         InitPool();

@@ -25,7 +25,9 @@ public class ResourceDataObj : ScriptableObject
 
     public GameObject Blood = null;
 
-    public GameObject Muzzle = null;
+    public GameObject ChunkBlood = null;
+
+    public GameObject BulletHit = null;
 
     public GameObject HealthPack = null;
 
@@ -33,7 +35,8 @@ public class ResourceDataObj : ScriptableObject
     {
         Player = Resources.Load<GameObject>("PlayerPrefab/Player");
         NormalZombie = Resources.Load<GameObject>("NormalZombiePrefab/NormalZombie");
-
+        BulletHit = Resources.Load<GameObject>("FX/BulletHit");
         Blood = Resources.Load<GameObject>("Blood");
+        ChunkBlood = Resources.Load<GameObject>("FX/ChunkBlood");
     }
 }
