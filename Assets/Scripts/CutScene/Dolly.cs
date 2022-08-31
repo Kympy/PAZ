@@ -20,6 +20,7 @@ public class Dolly : MonoBehaviour
 
     private GameObject blood;
     private GameObject Crate;
+    private GameObject muzzle;
     private Light cell;
     private Image panel;
 
@@ -45,7 +46,8 @@ public class Dolly : MonoBehaviour
         asianAnim = GameObject.Find("Asian").GetComponent<Animator>();
         white2Anim = GameObject.Find("White2").GetComponent<Animator>();
         blackAnim = GameObject.Find("Black").GetComponent<Animator>();
-
+        muzzle = GameObject.FindGameObjectWithTag("Muzzle");
+        muzzle.SetActive(false);
         center = GameObject.Find("CenterText").GetComponent<TextMeshProUGUI>();
         bottom = GameObject.Find("BottomText").GetComponent<TextMeshProUGUI>();
 
@@ -78,51 +80,6 @@ public class Dolly : MonoBehaviour
                 op.allowSceneActivation = true;
             }
         }
-
-        if (first == false)
-        {
-            if (cart.m_Position == track.PathLength)
-            {
-                timer += Time.deltaTime;
-                if (timer > 2f)
-                {
-                    asianAnim.SetTrigger("IsTalk");
-                    timer = 0f;
-                    first = true;
-                }
-            }
-        }
-        if(first == true && second == false)
-        {
-            timer += Time.deltaTime;
-            if(timer > 6f)
-            {
-                white2Anim.SetTrigger("IsTalk");
-                timer = 0f;
-                second = true;
-            }
-        }
-        if(second == true)
-        {
-            timer += Time.deltaTime;
-            if(timer > 10f)
-            {
-                timer = 0f;
-                blackAnim.SetTrigger("IsShoot");
-                second = false;
-                third = true;
-            }
-        }
-        if(third == true)
-        {
-            timer += Time.deltaTime;
-            if(timer > 2.5f)
-            {
-                timer = 0f;
-                asianAnim.SetTrigger("IsDead");
-                third = false;
-            }
-        }
     }
     private string[] texts =
     {
@@ -146,7 +103,7 @@ public class Dolly : MonoBehaviour
                 if (i >= texts.Length) break;
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
         center.text = "";
         yield return new WaitForSeconds(2f);
@@ -162,18 +119,26 @@ public class Dolly : MonoBehaviour
     private IEnumerator TalkCoroutine()
     {
         yield return new WaitForSeconds(3f);
+        asianAnim.SetTrigger("IsTalk");
         bottom.text = "We promised, I did everything you told me!";
         yield return new WaitForSeconds(4f);
         bottom.text = "Why are you doing this?";
         yield return new WaitForSeconds(3f);
+        white2Anim.SetTrigger("IsTalk");
         bottom.text = "Sir,";
         yield return new WaitForSeconds(2f);
         bottom.text = "(Tell a secret)";
         yield return new WaitForSeconds(2f);
         bottom.text = "";
         yield return new WaitForSeconds(3f);
+        blackAnim.SetTrigger("IsShoot");
         bottom.text = "- Hmm..\n- Oh, Please..";
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(1f);
+        asianAnim.SetTrigger("IsDead");
+        muzzle.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        muzzle.SetActive(false);
+        yield return new WaitForSeconds(2.5f);
         bottom.text = "";
         yield return new WaitForSeconds(1f);
         cart2.m_Speed = 0.2f;

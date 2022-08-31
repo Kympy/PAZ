@@ -18,6 +18,7 @@ TagManager:
   - FxTemporaire
   - Muzzle
   - Enemy
+  - CameraRotate
   layers:
   - Default
   - TransparentFX

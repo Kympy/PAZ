@@ -34,7 +34,7 @@ public class InputManager : MonoBehaviour
     public bool Brake { get { return brake; } }
     public bool LeftClick { get { return leftClick; } }
 
-    public bool LeftCliking { get { return leftClicking; } }
+    public bool LeftClicking { get { return leftClicking; } }
     public bool RightClicking { get { return rightClicking; } }
     public bool E { get { return EKey; } }
     public bool Reload { get { return reload; } }

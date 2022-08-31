@@ -10,17 +10,19 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] private Rigidbody _Rigidbody;
 
     [HideInInspector] private Vector3 moveVector; // Desired Movement Vector
-    [HideInInspector] private Vector3 rotateVector; // Desired Rotation Vector
     [HideInInspector] private Vector3 relativeVector;
     [HideInInspector] private Vector3 finalVector = Vector3.zero;
+    private Vector3 originFocusPoint; // Original position of focus point
+
+    private Vector3 gunRayOffset = Vector3.zero;
 
     private float moveSpeed = 0f; // Use to walk and run speed
     private float turnDirection = 0f; // Use to rotate character
     private float fireTimer = 0f; // Fire timer
-    private const float fireTime = 0.6f; // My gun fire rate
+    private const float fireTime = 0.25f; // My gun fire rate
     private int bulletCount = 30; // current Ammo count
-    private const int maxBulletCount = 30;
-    private int haveBulletCount = 0;
+    private const int maxBulletCount = 30; // Max Ammo
+    private int haveBulletCount = 9999; 
 
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 4f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
@@ -34,7 +36,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_Y = 100f;
     [SerializeField, Range(0f, 500f)] private float turnMultiplier = 300f;
     [SerializeField, Range(0f, 1000f)] private float gunRange = 500f;
-    
+
+    // Player spine
+    private Transform upperBody = null;
 
     private GameObject focusPoint; // Camera point
     // Hand
@@ -52,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private bool IsAim = false;
     private bool IsGun = false;
     private bool IsFire = false;
+    private bool Reloading = false;
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
@@ -83,12 +88,13 @@ public class PlayerController : MonoBehaviour
 
         muzzleEffect.SetActive(false);
         realGun.SetActive(false);
+
+        upperBody = _Animator.GetBoneTransform(HumanBodyBones.Spine);
         Cursor.lockState = CursorLockMode.Locked;
     }
     private void Start()
     {
         focusPoint = GameObject.Find("Focus");
-
         StartCoroutine(GetPlayerVelocity());
     }
     private void FixedUpdate()
@@ -100,15 +106,20 @@ public class PlayerController : MonoBehaviour
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
         IsJump = _InputManager.Jump;
         IsAim = _InputManager.RightClicking;
-
+        MouseCamera();
         Jump();
         Axe();
+        Aim();
         Fire();
         Reload();
-        MouseCamera();
+
 
         SlotChange();
         AnimationPlay();
+    }
+    private void LateUpdate()
+    {
+        UpperBodyRotate();
     }
     private void Movement() // Character Movement And Rotation
     {
@@ -121,8 +132,8 @@ public class PlayerController : MonoBehaviour
             if(IsMove)
             {
                 _Rigidbody.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
-                transform.Rotate(transform.up * turnDirection * turnMultiplier * Time.deltaTime); // Rotate Character
-                focusPoint.transform.parent.Rotate(transform.up * -turnDirection * turnMultiplier * Time.deltaTime);
+                transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * transform.up); // Rotate Character
+                focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * transform.up);
             }
             /*
             if (_InputManager.Horizontal != 0f) // Has Horizontal Movement
@@ -274,11 +285,19 @@ public class PlayerController : MonoBehaviour
         xRotate = focusPoint.transform.localEulerAngles.x - Input.GetAxis("Mouse Y"); // Get X rotate
         xRotate = xRotate > 180 ? xRotate - 360 : xRotate; // Get X rotate when x have minus value
         xRotate = Mathf.Clamp(xRotate, -25, 60); // Clamp angles
+
         // Vertical
         focusPoint.transform.eulerAngles = new Vector3(xRotate, focusPoint.transform.eulerAngles.y, 0f);
         
         // Horizontal
         focusPoint.transform.parent.Rotate(transform.up * Input.GetAxis("Mouse X") * mouseSensitivity_X * Time.deltaTime);
+    }
+    private void UpperBodyRotate()
+    {
+        //upperBody.LookAt(Camera.main.transform.position + Camera.main.transform.forward * 20f);
+        //upperBody.rotation = upperBody.rotation * Quaternion.Euler(0f, -40f, -100f);
+        //upperBody.rotation = Quaternion.Euler(upperBody.rotation.x, upperBody.rotation.y, xRotate - 110);
+        upperBody.Rotate(0f, 0f, xRotate);
     }
     private void AnimationPlay()
     {
@@ -307,24 +326,34 @@ public class PlayerController : MonoBehaviour
     
     private void Fire()
     {
-        if(IsGun && _InputManager.LeftCliking && bulletCount > 0)
+        if(_InputManager.LeftClicking && IsAim == false) // Rotate Forward
         {
-            fireTimer = fireTime; // First shot
+            transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
+            focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
+        }
+        if (IsGun && _InputManager.LeftClick && bulletCount > 0 && Reloading == false) // First shoot
+        {
+            fireTimer = fireTime;
+        }
+        if (IsGun && _InputManager.LeftClicking && bulletCount > 0 && Reloading == false) // Shooting
+        {
             fireTimer += Time.deltaTime; // timer Start
             if(fireTimer >= fireTime) // Satisfied fire rate
             {
                 fireTimer = 0f; // reset
+                bulletCount--;
+                UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
                 muzzleEffect.SetActive(true); // show muzzle
                 IsFire = true; // Animation
-                Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * gunRange, Color.red);
-                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, gunRange)) // Shoot ray
+                Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * gunRange, Color.red);
+                if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, gunRange)) // Shoot ray
                 {
-                    if (hit.transform.CompareTag("Enemy")) // Zombie ?
+                    if (hit.transform.CompareTag("Enemy")) // Is that a Zombie ?
                     {
                         EffectPool.Instance.GetEffect("Blood").transform.position = hit.point;
-                        hit.transform.gameObject.GetComponent<ZombieBase>().NextState(ZombieBase.State.GunHit); // Give damage
+                        hit.transform.gameObject.GetComponent<ZombieBase>().NextState(ZombieBase.State.GunHit); // Give a damage
                     }
-                    else
+                    else // Hit ground
                     {
                         EffectPool.Instance.GetEffect("Normal").transform.position = hit.point;
                         return;
@@ -336,8 +365,8 @@ public class PlayerController : MonoBehaviour
         {
             muzzleEffect.SetActive(false); // hide muzzle
             IsFire = false;
-            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 10f, Color.green);
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))
+            Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * 10f, Color.green);
+            if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))
             {
 
                 if(_InputManager.E) // Get
@@ -352,11 +381,25 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    private void Aim()
+    {
+        if(IsAim)
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 37f, Time.deltaTime * 5f);
+            transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
+            focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
+        }
+        else
+        {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 60f, Time.deltaTime * 8f);
+        }
+    }
     private void Reload()
     {
-        if(_InputManager.Reload) // Input R
+        if(IsGun && _InputManager.Reload && bulletCount < maxBulletCount && Reloading == false) // Input R
         {
             _Animator.SetTrigger("IsReload"); // reload animation
+            Reloading = true;
         }
     }
     private void OnReloadEvent() // When start reload animation ends
@@ -372,6 +415,8 @@ public class PlayerController : MonoBehaviour
             bulletCount += haveBulletCount;
             haveBulletCount = 0;
         }
+        Reloading = false;
+        UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
     }
     private void SlotChange() // Num1 Num2
     {
