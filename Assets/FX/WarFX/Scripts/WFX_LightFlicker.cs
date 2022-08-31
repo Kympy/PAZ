@@ -14,7 +14,7 @@ public class WFX_LightFlicker : MonoBehaviour
 	
 	private float timer;
 	
-	void Start ()
+	void OnEnable ()
 	{
 		timer = time;
 		StartCoroutine("Flicker");
@@ -35,4 +35,8 @@ public class WFX_LightFlicker : MonoBehaviour
 			timer = time;
 		}
 	}
+    private void OnDisable()
+    {
+		StopCoroutine("Flicker");
+    }
 }
