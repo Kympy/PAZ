@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class NormalZombie : ZombieBase
 {
+    private BoxCollider attackCollider = null;
     public override void Awake()
     {
         base.Awake();
-
-
+        attackCollider = GetComponentInChildren<BoxCollider>();
     }
     public override void Start()
     {
@@ -16,8 +16,16 @@ public class NormalZombie : ZombieBase
         // Time
         _Agent.stoppingDistance = attackRange;
         rotateSpeed = 5f;
-        attackTime = new WaitForSeconds(4f);
+        attackTime = new WaitForSeconds(1.2f);
         hitFrontTime = new WaitForSeconds(1.2f);
         hitBackTime = new WaitForSeconds(2.15f);
+    }
+    public void AttackTriggerOn()
+    {
+        attackCollider.enabled = true;
+    }
+    public void AttackTriggerOff()
+    {
+        attackCollider.enabled = false;
     }
 }

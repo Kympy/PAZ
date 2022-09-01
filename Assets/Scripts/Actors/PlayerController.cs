@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour
     private const float fireTime = 0.15f; // My gun fire rate
     private int bulletCount = 30; // current Ammo count
     private const int maxBulletCount = 30; // Max Ammo
-    private int haveBulletCount = 9999; 
+    private int haveBulletCount = 9999;
+    private float currentHP;
+    private float MaxHP = 1000f;
 
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 4f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
@@ -71,6 +73,7 @@ public class PlayerController : MonoBehaviour
     private Bullet temp;
     private void Awake()
     {
+        currentHP = MaxHP;
         _InputManager = GetComponent<InputManager>();
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
@@ -116,7 +119,10 @@ public class PlayerController : MonoBehaviour
         Aim();
         Fire();
         Reload();
+        if(Input.GetKeyDown(KeyCode.F))
+        {
 
+            DecreaseHP(100f); }
 
         SlotChange();
         AnimationPlay();
@@ -334,7 +340,6 @@ public class PlayerController : MonoBehaviour
     {
         realAxe.GetComponent<CapsuleCollider>().isTrigger = true;
     }
-    
     private void Fire()
     {
         if(_InputManager.LeftClicking && IsAim == false) // Rotate Forward
@@ -447,7 +452,6 @@ public class PlayerController : MonoBehaviour
         {
             AxeMode();
         }
-
     }
     private void GunMode()
     {
@@ -469,6 +473,20 @@ public class PlayerController : MonoBehaviour
 
         fakeGun.SetActive(true);
         fakeAxe.SetActive(false);
+    }
+    public void DecreaseHP(float damage) // Get Damage
+    {
+        currentHP -= damage;
+        UIManager.Instance.StopUpdateBar();
+        UIManager.Instance.UpdateBar(currentHP, MaxHP);
+        Die();
+    }
+    public void Die()
+    {
+        if(currentHP <= 0)
+        {
+            Debug.Log("Die");
+        }
     }
 #if UNITY_EDITOR
     private void OnDrawGizmos()

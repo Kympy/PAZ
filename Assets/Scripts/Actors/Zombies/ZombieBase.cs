@@ -282,7 +282,7 @@ public class ZombieBase : MonoBehaviour
         yield return deadBodyTime;
         ZombiePool.Instance.ReturnZombie(this);
     }
-    public void OnAttackEvent()
+    public virtual void OnAttackEvent()
     {
 
     }

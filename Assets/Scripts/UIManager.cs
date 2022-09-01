@@ -7,10 +7,13 @@ using TMPro;
 public class UIManager : Singleton<UIManager>
 {
     private TextMeshProUGUI currentBullet = null;
+    private Image hpBar = null;
+    public Coroutine UICoroutine = null;
 
     public override void Awake()
     {
         currentBullet = GameObject.Find("CurrentBullet").GetComponent<TextMeshProUGUI>();
+        hpBar = GameObject.Find("HPBar").GetComponent<Image>();
     }
     public void SetBulletUI(int current, int have)
     {
@@ -20,5 +23,23 @@ public class UIManager : Singleton<UIManager>
             currentBullet.color = Color.red;
         }
         else currentBullet.color = Color.white;
+    }
+    public void UpdateBar(float current, float max)
+    {
+        UICoroutine = StartCoroutine(UpdateHPBar(current, max));
+    }
+    public void StopUpdateBar()
+    {
+        if(UICoroutine != null)
+        StopCoroutine(UICoroutine);
+    }
+    private IEnumerator UpdateHPBar(float current, float max)
+    {
+        while(true)
+        {
+            hpBar.fillAmount = Mathf.Lerp(hpBar.fillAmount, current / max, Time.deltaTime * 3f);
+            if (Mathf.Approximately(hpBar.fillAmount, current / max)) yield break;
+            yield return null;
+        }
     }
 }
