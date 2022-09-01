@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
 
     private bool EKey = false;
     private bool reload = false;
+    private bool tabKey = false;
 
     private bool Slot_1 = false;
     private bool Slot_2 = false;
@@ -38,6 +39,7 @@ public class InputManager : MonoBehaviour
     public bool RightClicking { get { return rightClicking; } }
     public bool E { get { return EKey; } }
     public bool Reload { get { return reload; } }
+    public bool TabKey { get { return tabKey; } }
 
     public bool Slot1 { get { return Slot_1; } }
     public bool Slot2 { get { return Slot_2; } }
@@ -70,6 +72,7 @@ public class InputManager : MonoBehaviour
 
         EKey = Input.GetKeyDown(KeyCode.E);
         reload = Input.GetKeyDown(KeyCode.R);
+        tabKey = Input.GetKey(KeyCode.Tab);
 
         leftClick = Input.GetMouseButtonDown(0);
         leftClicking = Input.GetMouseButton(0);

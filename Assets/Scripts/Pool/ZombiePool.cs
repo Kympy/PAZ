@@ -37,7 +37,7 @@ public class ZombiePool : Singleton<ZombiePool>
 
         if(NormalPool.Count == 0)
         {
-            obj = Instantiate(NormalPrefab, transform.position, Quaternion.identity);
+            obj = Instantiate(NormalPrefab, transform);
         }
         else
         {

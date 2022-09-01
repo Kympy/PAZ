@@ -125,6 +125,7 @@ public class PlayerController : MonoBehaviour
             DecreaseHP(100f); }
 
         SlotChange();
+        ShowMap();
         AnimationPlay();
     }
     private void LateUpdate()
@@ -473,6 +474,14 @@ public class PlayerController : MonoBehaviour
 
         fakeGun.SetActive(true);
         fakeAxe.SetActive(false);
+    }
+    private void ShowMap()
+    {
+        if (_InputManager.TabKey)
+        {
+            UIManager.Instance.ShowMap(true);
+        }
+        else UIManager.Instance.ShowMap(false);
     }
     public void DecreaseHP(float damage) // Get Damage
     {

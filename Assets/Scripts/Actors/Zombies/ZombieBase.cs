@@ -82,6 +82,13 @@ public class ZombieBase : MonoBehaviour
         _Rigidbody.useGravity = true;
         this.GetComponent<Collider>().enabled = true;
         currentHP = MaxHP;
+        _Agent.isStopped = false;
+        _Agent.speed = walkSpeed;
+    }
+    private void OnDisable()
+    {
+        _Agent.isStopped = true;
+        _Agent.speed = 0f;
     }
     public virtual void Awake()
     {
@@ -132,7 +139,7 @@ public class ZombieBase : MonoBehaviour
     {
         findTimer = 0.5f;
         moveTimer = 3f;
-        _Agent.enabled = true;
+        _Agent.isStopped = false;
         _Agent.speed = walkSpeed;
         _Animator.SetBool("IsIdle", true); // -> Patrol Animation == walk
         while(true)
@@ -167,7 +174,7 @@ public class ZombieBase : MonoBehaviour
     }
     public IEnumerator Move_State() // Run State. Chase Player to Attack Range
     {
-        _Agent.enabled = true;
+        _Agent.isStopped = false;
         _Agent.speed = runSpeed;
         while (true)
         {
@@ -332,7 +339,8 @@ public class ZombieBase : MonoBehaviour
     }
     public void StopAgent() // Stop Agent movement
     {
-        _Agent.enabled = false;
+        _Agent.speed = 0;
+        _Agent.isStopped = true;
     }
 #if UNITY_EDITOR
     public Vector3 DirFromAngle(float angleDegrees, bool angleIsGlobal)

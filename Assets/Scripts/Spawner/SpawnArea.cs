@@ -27,12 +27,8 @@ public class SpawnArea : MonoBehaviour
 				continue;
             }
 
-			// 몬스터를 현재 spawnPoint 기준으로 생성한다.
-			//Instantiate(prefabMob, getRandomPos(), Quaternion.identity);
-
 			// 몬스터풀에 몬스터 1개를 생성 요청
 			ZombieBase mob = ZombiePool.Instance.GetNormalZombie();
-			mob.transform.SetParent(null);
 			mob.transform.position = GetRandomPos();
 			mob.InitData(DataManager.Instance.GetZombieData("Normal"));
 			currentCount++;

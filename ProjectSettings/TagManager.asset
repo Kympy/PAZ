@@ -21,6 +21,7 @@ TagManager:
   - CameraRotate
   - Casing
   - NormalArm
+  - MapCamera
   layers:
   - Default
   - TransparentFX
@@ -33,9 +34,9 @@ TagManager:
   - Enemy
   - IgnorePhysics
   - Props
-  - 
-  - 
-  - 
+  - Minimap
+  - MinimapIcon
+  - Fog
   - 
   - 
   - 
