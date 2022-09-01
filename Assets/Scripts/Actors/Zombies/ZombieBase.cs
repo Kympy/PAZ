@@ -111,7 +111,7 @@ public class ZombieBase : MonoBehaviour
     }
     public void GunDamage()
     {
-        currentHP -= 200f;
+        currentHP -= 500f;
     }
     public void Die()
     {

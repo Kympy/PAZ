@@ -31,6 +31,8 @@ public class ResourceDataObj : ScriptableObject
 
     public GameObject HealthPack = null;
 
+    public GameObject Bullet = null;
+
     private void Awake()
     {
         Player = Resources.Load<GameObject>("PlayerPrefab/Player");
@@ -38,5 +40,6 @@ public class ResourceDataObj : ScriptableObject
         BulletHit = Resources.Load<GameObject>("FX/BulletHit");
         Blood = Resources.Load<GameObject>("Blood");
         ChunkBlood = Resources.Load<GameObject>("FX/ChunkBlood");
+        Bullet = Resources.Load<GameObject>("Bullet");
     }
 }

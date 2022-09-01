@@ -6,7 +6,6 @@ public class ZombiePool : Singleton<ZombiePool>
 {
     private Queue<ZombieBase> NormalPool = new Queue<ZombieBase>();
     
-
     private NormalZombie NormalPrefab = null;
     private GameObject GhoulPrefab = null;
     private GameObject PowerPrefab = null;

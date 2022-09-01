@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     private float moveSpeed = 0f; // Use to walk and run speed
     private float turnDirection = 0f; // Use to rotate character
     private float fireTimer = 0f; // Fire timer
-    private const float fireTime = 0.25f; // My gun fire rate
+    private const float fireTime = 0.15f; // My gun fire rate
     private int bulletCount = 30; // current Ammo count
     private const int maxBulletCount = 30; // Max Ammo
     private int haveBulletCount = 9999; 
@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
     private GameObject fakeGun = null;
     // Muzzle effect
     private GameObject muzzleEffect = null;
+    // Casing
+    private GameObject casingEffect = null;
 
     private bool IsMove = false;
     private bool IsJump = false;
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour
     // temp
     private RaycastHit hit; // temp hit
     private float xRotate;
-
+    private Bullet temp;
     private void Awake()
     {
         _InputManager = GetComponent<InputManager>();
@@ -85,8 +87,10 @@ public class PlayerController : MonoBehaviour
         fakeAxe.SetActive(false);
 
         muzzleEffect = GameObject.FindGameObjectWithTag("Muzzle");
+        casingEffect = GameObject.FindGameObjectWithTag("Casing");
 
         muzzleEffect.SetActive(false);
+        casingEffect.SetActive(false);
         realGun.SetActive(false);
 
         upperBody = _Animator.GetBoneTransform(HumanBodyBones.Spine);
@@ -348,10 +352,17 @@ public class PlayerController : MonoBehaviour
             if(fireTimer >= fireTime) // Satisfied fire rate
             {
                 fireTimer = 0f; // reset
-                bulletCount--;
-                UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
+                bulletCount--; // Count down bullet
+                UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount); // UI Update
+
                 muzzleEffect.SetActive(true); // show muzzle
+                casingEffect.SetActive(true); // Show case
                 IsFire = true; // Animation
+
+                temp = BulletPool.Instance.GetBullet().GetComponent<Bullet>(); // Get Bullet obj
+                temp.transform.position = muzzleEffect.transform.position; // set pos
+                temp.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward * gunRange); // set rot
+     
                 Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * gunRange, Color.red);
                 if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, gunRange)) // Shoot ray
                 {
@@ -371,6 +382,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             muzzleEffect.SetActive(false); // hide muzzle
+            casingEffect.SetActive(false); // hide casing
             IsFire = false;
             Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * 10f, Color.green);
             if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))

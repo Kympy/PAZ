@@ -19,6 +19,7 @@ TagManager:
   - Muzzle
   - Enemy
   - CameraRotate
+  - Casing
   layers:
   - Default
   - TransparentFX
