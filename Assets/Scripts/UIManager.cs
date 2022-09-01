@@ -20,6 +20,7 @@ public class UIManager : Singleton<UIManager>
         hpBar = GameObject.Find("HPBar").GetComponent<Image>();
         MapCamera = GameObject.FindGameObjectWithTag("MapCamera").GetComponent<Camera>();
         MapCamera.enabled = false;
+        MapCamera.depth = 1;
         areaDiscover = GameObject.Find("AreaDiscover").GetComponent<TextMeshProUGUI>();
         areaDiscover.alpha = 0f;
     }
