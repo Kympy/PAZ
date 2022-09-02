@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+public class InputManager : Singleton<InputManager>
 {
     internal enum InputType { Keyboard, Mobile } // Input Type
     [SerializeField] private InputType _Input = InputType.Keyboard;
@@ -47,6 +47,11 @@ public class InputManager : MonoBehaviour
     public bool HasVerticalInput { get { return hasVerticalInput; } }
     public bool HasHorizontalInput { get { return hasHorizontalInput; } }
 
+    
+    public override void Awake()
+    {
+        
+    }
     private void Update()
     {
         if(_Input == InputType.Keyboard) // By Input Type

@@ -22,6 +22,7 @@ TagManager:
   - Casing
   - NormalArm
   - MapCamera
+  - LockedDoor
   layers:
   - Default
   - TransparentFX
@@ -37,8 +38,8 @@ TagManager:
   - Minimap
   - MinimapIcon
   - Fog
-  - 
-  - 
+  - LockUI
+  - OnlyPlayer
   - 
   - 
   - 

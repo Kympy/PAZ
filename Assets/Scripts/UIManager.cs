@@ -11,6 +11,12 @@ public class UIManager : Singleton<UIManager>
     public Coroutine UICoroutine = null;
     private Camera MapCamera = null;
     private TextMeshProUGUI areaDiscover = null;
+    private GameObject OpenText = null; // When mouse over on locked door.
+
+    // Game UI
+    private CanvasGroup UICanvas = null;
+    // Lock system UI
+    private GameObject LockUICam = null;
 
     private WaitForSeconds delayTime = new WaitForSeconds(2f);
 
@@ -18,11 +24,21 @@ public class UIManager : Singleton<UIManager>
     {
         currentBullet = GameObject.Find("CurrentBullet").GetComponent<TextMeshProUGUI>();
         hpBar = GameObject.Find("HPBar").GetComponent<Image>();
+
         MapCamera = GameObject.FindGameObjectWithTag("MapCamera").GetComponent<Camera>();
         MapCamera.enabled = false;
         MapCamera.depth = 1;
+
         areaDiscover = GameObject.Find("AreaDiscover").GetComponent<TextMeshProUGUI>();
         areaDiscover.alpha = 0f;
+
+        OpenText = GameObject.Find("OpenText");
+        OpenText.SetActive(false);
+
+        UICanvas = GameObject.Find("UICanvas").GetComponent<CanvasGroup>();
+
+        LockUICam = GameObject.Find("LockUICam");
+        LockUICam.SetActive(false);
     }
     public void SetBulletUI(int current, int have) // Show current bullet
     {
@@ -77,5 +93,22 @@ public class UIManager : Singleton<UIManager>
             }
             yield return null;
         }
+    }
+    public void ToggleLockUI(bool value)
+    {
+        LockUICam.SetActive(value);
+        if (UICanvas.alpha == 1f)
+            UICanvas.alpha = 0f;
+        else if (UICanvas.alpha == 0f)
+            UICanvas.alpha = 1f;
+    }
+    public void ShowDoorText()
+    {
+        OpenText.SetActive(true);
+        OpenText.transform.position = Input.mousePosition;
+    }
+    public void HideDoorText()
+    {
+        OpenText.SetActive(false);
     }
 }
