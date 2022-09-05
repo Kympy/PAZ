@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
 
-    private WaitForSeconds oneSec = new WaitForSeconds(1f);
+    private WaitForSecondsRealtime oneSec = new WaitForSecondsRealtime(1f);
 
     // temp
     private RaycastHit hit; // temp hit
@@ -113,6 +113,7 @@ public class PlayerController : MonoBehaviour
         IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
         IsJump = _InputManager.Jump;
         IsAim = _InputManager.RightClicking;
+
         MouseCamera();
         Jump();
         Axe();
@@ -122,11 +123,13 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.F))
         {
 
-            DecreaseHP(100f); }
+            DecreaseHP(100f); 
+        }
 
         SlotChange();
         ShowMap();
         AnimationPlay();
+        ResetLegMovement();
     }
     private void LateUpdate()
     {
@@ -134,6 +137,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Movement() // Character Movement And Rotation
     {
+        Debug.LogError(Time.timeScale);
         if (IsLanding() == false && IsFalling == false)
         {
             finalVector = Vector3.zero;
@@ -308,13 +312,10 @@ public class PlayerController : MonoBehaviour
         focusPoint.transform.eulerAngles = new Vector3(xRotate, focusPoint.transform.eulerAngles.y, 0f);
         
         // Horizontal
-        focusPoint.transform.parent.Rotate(transform.up * Input.GetAxis("Mouse X") * mouseSensitivity_X * Time.deltaTime);
+        focusPoint.transform.parent.Rotate(Input.GetAxis("Mouse X") * mouseSensitivity_X * Time.deltaTime * transform.up);
     }
     private void UpperBodyRotate()
     {
-        //upperBody.LookAt(Camera.main.transform.position + Camera.main.transform.forward * 20f);
-        //upperBody.rotation = upperBody.rotation * Quaternion.Euler(0f, -40f, -100f);
-        //upperBody.rotation = Quaternion.Euler(upperBody.rotation.x, upperBody.rotation.y, xRotate - 110);
         upperBody.Rotate(0f, 0f, xRotate);
     }
     private void AnimationPlay()
@@ -331,7 +332,8 @@ public class PlayerController : MonoBehaviour
     }
     private void ResetLegMovement()
     {
-        _Animator.SetTrigger("ResetLower");
+        if(_InputManager.RightClickUp || _InputManager.ShiftUp || _InputManager.Slot1 || _InputManager.Slot2) // Aim Down and Stop run
+            _Animator.SetTrigger("ResetLower"); // Leg movement reset
     }
     private void AxeOn()
     {
@@ -486,6 +488,7 @@ public class PlayerController : MonoBehaviour
     public void DecreaseHP(float damage) // Get Damage
     {
         currentHP -= damage;
+        _Animator.SetTrigger("IsHit");
         UIManager.Instance.StopUpdateBar();
         UIManager.Instance.UpdateBar(currentHP, MaxHP);
         Die();
@@ -494,6 +497,7 @@ public class PlayerController : MonoBehaviour
     {
         if(currentHP <= 0)
         {
+            _Animator.SetTrigger("IsDead");
             Debug.Log("Die");
         }
     }

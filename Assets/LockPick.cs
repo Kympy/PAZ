@@ -6,8 +6,11 @@ public class LockPick : MonoBehaviour
 {
     private GameObject keyBody = null;
     private GameObject key = null;
+    private Transform pivot = null;
 
     private GameObject smoke = null;
+
+    private Animator keyAnim = null;
 
     private float answer = 0f;
     private float mouseX = 0f;
@@ -17,7 +20,7 @@ public class LockPick : MonoBehaviour
     private float offset = 5f; // Allowance offset
 
     private float breakTimer = 0f;
-    private float brokenTime = 0.3f;
+    private float brokenTime = 1f;
 
     private const float answerMax = 89f;
     private const float keyRotMax = 90f;
@@ -26,12 +29,12 @@ public class LockPick : MonoBehaviour
 
     private bool waitReset = false;
 
-    private Vector3 originKeyPos;
-
     private void Awake()
     {
         keyBody = GameObject.Find("KeyBody");
-        key = GameObject.Find("Pivot");
+        key = GameObject.Find("KeyPivot");
+        pivot = GameObject.Find("Pivot").transform;
+        keyAnim = key.GetComponent<Animator>();
         smoke = GameObject.Find("KeySmoke");
         smoke.SetActive(false);
 
@@ -41,7 +44,6 @@ public class LockPick : MonoBehaviour
         rotationY = keyBody.transform.localEulerAngles.y;
         rotationY = rotationY > 180 ? rotationY - 360 : rotationY;
 
-        originKeyPos = key.transform.localPosition;
 
         key.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         keyBody.transform.localEulerAngles = new Vector3(0f, -90f, 0f);
@@ -55,7 +57,6 @@ public class LockPick : MonoBehaviour
         rotationY = keyBody.transform.localEulerAngles.y;
         rotationY = rotationY > 180 ? rotationY - 360 : rotationY;
 
-        originKeyPos = key.transform.localPosition;
 
         key.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         keyBody.transform.localEulerAngles = new Vector3(0f, -90f, 0f);
@@ -67,9 +68,11 @@ public class LockPick : MonoBehaviour
         {
             UIManager.Instance.ToggleLockUI(false);
             DoorManager.Instance.ClearCurrentDoor(); // Player doesn't tring unlock door
+            Time.timeScale = 1f;
         }
         if (waitReset == false) // Can't rotate when reset time
         {
+            key.transform.position = pivot.position;
             // Get Mouse X
             mouseX = Input.GetAxis("Mouse X");
             // Set Key's rotation
@@ -85,7 +88,7 @@ public class LockPick : MonoBehaviour
                 key.transform.localEulerAngles = new Vector3(0f, -keyRotMax, 0);
             }
             //else key.transform.RotateAround(pivot, Vector3.forward, -mouseX * 100 * Time.deltaTime);
-            else key.transform.Rotate(0f, mouseX * 100f * Time.deltaTime, 0f);
+            else key.transform.Rotate(0f, mouseX * 100f * Time.unscaledDeltaTime, 0f);
 
             // Calculate key body's Y rotation value
             rotationY = keyBody.transform.localEulerAngles.y;
@@ -114,7 +117,8 @@ public class LockPick : MonoBehaviour
                 {
                     if (Mathf.Abs(-90f - rotationY) > canRotate + offset) // If current rotation is less than canRotate value
                     {
-                        breakTimer += Time.deltaTime;
+                        keyAnim.SetBool("WillBreak", true);
+                        breakTimer += Time.unscaledDeltaTime;
                         if (breakTimer > brokenTime)
                         {
                             effectCoroutine = StartCoroutine(FailEffect());
@@ -126,21 +130,22 @@ public class LockPick : MonoBehaviour
                     }
                     else
                     {
-                        keyBody.transform.Rotate(0f, 100f * Time.deltaTime, 0f);
+                        keyBody.transform.Rotate(0f, 100f * Time.unscaledDeltaTime, 0f);
+                        keyAnim.SetBool("WillBreak", false);
                     }
                 }
             }
             else
             {
                 breakTimer = 0f;
-
+                keyAnim.SetBool("WillBreak", false);
                 if (rotationY < -90f)
                 {
                     keyBody.transform.localEulerAngles = new Vector3(0f, -keyRotMax, 0f);
                 }
                 else if(rotationY > -90f)
                 {
-                    keyBody.transform.Rotate(0f, -100f * Time.deltaTime, 0f);
+                    keyBody.transform.Rotate(0f, -100f * Time.unscaledDeltaTime, 0f);
                 }
             }
         }
@@ -161,9 +166,8 @@ public class LockPick : MonoBehaviour
 
         smoke.SetActive(false);
 
-        key.transform.localPosition = originKeyPos;
-        key.transform.localEulerAngles = Vector3.zero;
         keyBody.transform.localEulerAngles = new Vector3(0f, -keyRotMax, 0f);
+        key.transform.localEulerAngles = Vector3.zero;
 
         waitReset = false;
         effectCoroutine = null;
@@ -175,5 +179,6 @@ public class LockPick : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         UIManager.Instance.ToggleLockUI(false);
         DoorManager.Instance.RemoveOpenedDoor();
+        Time.timeScale = 1f;
     }
 }

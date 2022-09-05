@@ -13,6 +13,7 @@ public class DoorLock : MonoBehaviour
             UIManager.Instance.HideDoorText();
             UIManager.Instance.ToggleLockUI(true);
             DoorManager.Instance.SetCurrentDoor(this.gameObject); // Invoke this door's transform to door manager
+            Time.timeScale = 0f;
         }
     }
     private void OnMouseExit()

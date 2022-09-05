@@ -11,11 +11,12 @@ public class InputManager : Singleton<InputManager>
     [HideInInspector] private float horizontal = 0f; // Left and Right
     [HideInInspector] private bool jump = false; // Jump
     [HideInInspector] private bool sprint = false; // Run
-    [HideInInspector] private bool brake = false; // Stop Run
+    [HideInInspector] private bool shiftUp = false; // Stop Run
 
     private bool leftClick = false;
     private bool leftClicking = false;
     private bool rightClicking = false;
+    private bool rightClickUp = false;
 
     private bool EKey = false;
     private bool reload = false;
@@ -32,11 +33,13 @@ public class InputManager : Singleton<InputManager>
     public float Horizontal { get { return horizontal; } }
     public bool Jump { get { return jump; } }
     public bool Sprint { get { return sprint; } }
-    public bool Brake { get { return brake; } }
+    public bool ShiftUp { get { return shiftUp; } }
+
     public bool LeftClick { get { return leftClick; } }
 
     public bool LeftClicking { get { return leftClicking; } }
     public bool RightClicking { get { return rightClicking; } }
+    public bool RightClickUp { get { return rightClickUp; } }
     public bool E { get { return EKey; } }
     public bool Reload { get { return reload; } }
     public bool TabKey { get { return tabKey; } }
@@ -69,7 +72,7 @@ public class InputManager : Singleton<InputManager>
         horizontal = Input.GetAxis("Horizontal");
         jump = Input.GetKeyDown(KeyCode.Space);
         sprint = Input.GetKey(KeyCode.LeftShift);
-        brake = Input.GetKeyUp(KeyCode.LeftShift);
+        shiftUp = Input.GetKeyUp(KeyCode.LeftShift);
 
         Slot_1 = Input.GetKeyDown(KeyCode.Alpha1);
         Slot_2 = Input.GetKeyDown(KeyCode.Alpha2);
@@ -82,6 +85,7 @@ public class InputManager : Singleton<InputManager>
         leftClick = Input.GetMouseButtonDown(0);
         leftClicking = Input.GetMouseButton(0);
         rightClicking = Input.GetMouseButton(1);
+        rightClickUp = Input.GetMouseButtonUp(1);
 
         hasVerticalInput = !Mathf.Approximately(vertical, 0f);
         hasHorizontalInput = !Mathf.Approximately(horizontal, 0f);
