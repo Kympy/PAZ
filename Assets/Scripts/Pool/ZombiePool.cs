@@ -44,7 +44,7 @@ public class ZombiePool : Singleton<ZombiePool>
             obj = NormalPool.Dequeue();
         }
 
-        obj.transform.SetParent(null);
+        obj.transform.SetParent(null, false);
         obj.gameObject.SetActive(true);
 
         return obj;

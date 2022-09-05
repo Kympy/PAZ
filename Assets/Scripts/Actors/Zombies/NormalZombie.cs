@@ -12,13 +12,13 @@ public class NormalZombie : ZombieBase
     }
     public override void Start()
     {
-        base.Start();
         // Time
         _Agent.stoppingDistance = attackRange;
         rotateSpeed = 5f;
         attackTime = new WaitForSeconds(1.2f);
         hitFrontTime = new WaitForSeconds(1.2f);
         hitBackTime = new WaitForSeconds(2.15f);
+        base.Start();
     }
     public void AttackTriggerOn()
     {

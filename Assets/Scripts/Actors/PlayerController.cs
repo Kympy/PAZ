@@ -137,7 +137,6 @@ public class PlayerController : MonoBehaviour
     }
     private void Movement() // Character Movement And Rotation
     {
-        Debug.LogError(Time.timeScale);
         if (IsLanding() == false && IsFalling == false)
         {
             finalVector = Vector3.zero;

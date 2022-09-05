@@ -82,17 +82,11 @@ public class ZombieBase : MonoBehaviour
         _Rigidbody.useGravity = true;
         this.GetComponent<Collider>().enabled = true;
         currentHP = MaxHP;
-        _Agent.isStopped = false;
-        _Agent.speed = walkSpeed;
-    }
-    private void OnDisable()
-    {
-        _Agent.isStopped = true;
-        _Agent.speed = 0f;
     }
     public virtual void Awake()
     {
         _Agent = GetComponent<NavMeshAgent>();
+        _Agent.enabled = false;
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
         targetMask = 1 << LayerMask.NameToLayer("Player");
@@ -102,6 +96,7 @@ public class ZombieBase : MonoBehaviour
     {
         decreaseHP += GunDamage;
         decreaseHP += Die;
+        _Agent.enabled = true;
         NextState(State.Idle);
     }
     public virtual void InitData(ZombieData myData) // Get Data
@@ -138,7 +133,7 @@ public class ZombieBase : MonoBehaviour
     public IEnumerator Idle_State()
     {
         findTimer = 0.5f;
-        moveTimer = 3f;
+        moveTimer = 5f;
         _Agent.isStopped = false;
         _Agent.speed = walkSpeed;
         _Animator.SetBool("IsIdle", true); // -> Patrol Animation == walk
@@ -153,14 +148,14 @@ public class ZombieBase : MonoBehaviour
             }
             if(moveTimer > 5f) // Random Move Timer
             {
-                desiredPos.Set(Random.Range(transform.position.x - moveOffset, transform.position.x + moveOffset),
+                desiredPos = new Vector3(Random.Range(transform.position.x - moveOffset, transform.position.x + moveOffset),
                     transform.position.y, Random.Range(transform.position.z - moveOffset, transform.position.z + moveOffset));
                 moveTimer = 0f;
                 Debug.Log("## 01 IDLE / Set Random Pos : " + desiredPos);
             }
             if(_Agent.pathPending == false)
             {
-                _Agent.SetDestination(desiredPos);
+               _Agent.SetDestination(desiredPos);
             }
             yield return null;
         }

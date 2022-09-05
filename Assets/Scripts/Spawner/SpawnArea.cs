@@ -29,7 +29,9 @@ public class SpawnArea : MonoBehaviour
 
 			// 몬스터풀에 몬스터 1개를 생성 요청
 			ZombieBase mob = ZombiePool.Instance.GetNormalZombie();
-			mob.transform.position = GetRandomPos();
+			mob.transform.position = GetRandomPos();// GetRandomPos();
+			Debug.Log("This : " + transform.position);
+			Debug.Log("Random : " + GetRandomPos());
 			mob.InitData(DataManager.Instance.GetZombieData("Normal"));
 			currentCount++;
 		}
