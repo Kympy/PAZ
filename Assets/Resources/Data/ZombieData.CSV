@@ -1,4 +1,4 @@
 Name,AttackPower,MaxHP,AttackRange,ViewRadius,ViewAngle,WalkSpeed,RunSpeed
-Normal,50,2000,2,20,360,1,5
-Ghoul,60,1000,2,35,360,7,7
-Power,30,3000,4,15,180,1,2
+Normal,100,2000,2,30,360,1,5
+Ghoul,150,1000,2,10,360,7,7
+Power,250,3000,4,50,180,1,2

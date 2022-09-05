@@ -57,6 +57,9 @@ public class DataManager : Singleton<DataManager>
     }
     public ZombieData GetZombieData(string name)
     {
+        // Normal
+        // Ghoul
+        // Power
         return ZombieDataList.Find(ZombieData => ZombieData.Name == name);
     }
     #endregion

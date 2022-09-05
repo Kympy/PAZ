@@ -23,6 +23,9 @@ TagManager:
   - NormalArm
   - MapCamera
   - LockedDoor
+  - DeathCam
+  - FollowCam
+  - DropBullet
   layers:
   - Default
   - TransparentFX

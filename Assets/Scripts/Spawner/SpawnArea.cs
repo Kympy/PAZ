@@ -9,13 +9,13 @@ public class SpawnArea : MonoBehaviour
 	[SerializeField, Range(0f, 20f)] private float width = 10;
 	[SerializeField, Range(0f, 20f)] private float height = 10;
 
-	private int maxCount = 10;
+	[SerializeField] private int maxCount = 10;
 	private int currentCount = 0;
 
-    private void Start()
+    private void OnTriggerEnter(Collider other)
     {
 		StartCoroutine(Spawn());
-    }
+	}
     private IEnumerator Spawn()
 	{
 		while (true)
@@ -24,7 +24,7 @@ public class SpawnArea : MonoBehaviour
 
 			if (currentCount >= maxCount) // To max count
             {
-				continue;
+				yield break;
             }
 
 			// 몬스터풀에 몬스터 1개를 생성 요청
@@ -36,7 +36,6 @@ public class SpawnArea : MonoBehaviour
 			currentCount++;
 		}
 	}
-
 	private Vector3 GetRandomPos()
 	{
 		Vector3 size = transform.lossyScale;

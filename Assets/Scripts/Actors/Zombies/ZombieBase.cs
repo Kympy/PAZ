@@ -55,28 +55,29 @@ public class ZombieBase : MonoBehaviour
     protected Vector3 desiredPos;
 
     // View Range
-    private float viewRadius;
-    private float viewAngle;
+    protected float viewRadius;
+    protected float viewAngle;
 
     // Properties
     public float ViewRadius { get; set; }
     public float ViewAngle { get; set; }
 
     // LayerMask
-    private LayerMask targetMask;
-    private LayerMask obstacleMask;
+    protected LayerMask targetMask;
+    protected LayerMask obstacleMask;
 
     // Targets which in Radius
-    private Collider[] targetsInViewRadius = null;
+    protected Collider[] targetsInViewRadius = null;
 
     // Target mask�� ray hit�� transform�� �����ϴ� ����Ʈ
-    private GameObject visibleTarget = null;
+    protected GameObject visibleTarget = null;
     public GameObject VisibleTarget { get; }
 
     // temp memories
-    private Transform targetTransform;
-    private Vector3 dir2Target;
-    private float distance2Target;
+    protected Transform targetTransform;
+    protected Vector3 dir2Target;
+    protected float distance2Target;
+    public float AttackPower { get { return attackPower; } }
     private void OnEnable()
     {
         _Rigidbody.useGravity = true;
@@ -130,10 +131,11 @@ public class ZombieBase : MonoBehaviour
         currentState = NewState; // Assign new state
         previousCoroutine = StartCoroutine(currentState.ToString() + "_State");
     }
-    public IEnumerator Idle_State()
+    public virtual IEnumerator Idle_State()
     {
         findTimer = 0.5f;
         moveTimer = 5f;
+        _Agent.enabled = true;
         _Agent.isStopped = false;
         _Agent.speed = walkSpeed;
         _Animator.SetBool("IsIdle", true); // -> Patrol Animation == walk
@@ -160,14 +162,14 @@ public class ZombieBase : MonoBehaviour
             yield return null;
         }
     }
-    public IEnumerator Scream_State()
+    public virtual IEnumerator Scream_State()
     {
         StopAgent();
         _Animator.SetTrigger("IsScream"); // Do Scream
         yield return screamTime;
         NextState(State.Move);
     }
-    public IEnumerator Move_State() // Run State. Chase Player to Attack Range
+    public virtual IEnumerator Move_State() // Run State. Chase Player to Attack Range
     {
         _Agent.isStopped = false;
         _Agent.speed = runSpeed;
@@ -195,7 +197,7 @@ public class ZombieBase : MonoBehaviour
             yield return null;
         }
     }
-    public IEnumerator Attack_State()
+    public virtual IEnumerator Attack_State()
     {
         StopAgent();
         while (true)
@@ -266,18 +268,20 @@ public class ZombieBase : MonoBehaviour
         }
         else NextState(State.Death);
     }
-    public IEnumerator Death_State()
+    public virtual IEnumerator Death_State()
     {
         StopAgent();
+        _Agent.enabled = false;
         _Rigidbody.useGravity = false;
         this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathForward");
         yield return deadBodyTime;
         ZombiePool.Instance.ReturnZombie(this);
     }
-    public IEnumerator BackDeath_State() 
+    public virtual IEnumerator BackDeath_State() 
     {
         StopAgent();
+        _Agent.enabled = false;
         _Rigidbody.useGravity = false;
         this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathBackward");
@@ -292,7 +296,7 @@ public class ZombieBase : MonoBehaviour
     {
         //NextState(State.Idle);
     }
-    private void OnCollisionEnter(Collision collision) // Collision by Axe
+    public void OnCollisionEnter(Collision collision) // Collision by Axe
     {
         if (collision.gameObject.CompareTag("RealAxe"))
         {
@@ -306,7 +310,7 @@ public class ZombieBase : MonoBehaviour
             }
         }
     }
-    private void FindVisibleTarget()
+    public virtual void FindVisibleTarget()
     {
         // Get targetMask collider which in view Radius
         targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
@@ -334,8 +338,8 @@ public class ZombieBase : MonoBehaviour
     }
     public void StopAgent() // Stop Agent movement
     {
-        _Agent.speed = 0;
         _Agent.isStopped = true;
+        _Agent.speed = 0;
     }
 #if UNITY_EDITOR
     public Vector3 DirFromAngle(float angleDegrees, bool angleIsGlobal)

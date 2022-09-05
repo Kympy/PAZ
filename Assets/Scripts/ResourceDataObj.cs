@@ -41,5 +41,6 @@ public class ResourceDataObj : ScriptableObject
         Blood = Resources.Load<GameObject>("Blood");
         ChunkBlood = Resources.Load<GameObject>("FX/ChunkBlood");
         Bullet = Resources.Load<GameObject>("Bullet");
+        DontDestroyOnLoad(this);
     }
 }

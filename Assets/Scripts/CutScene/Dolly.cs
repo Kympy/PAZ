@@ -91,10 +91,11 @@ public class Dolly : MonoBehaviour
     {
         int i = 0;
         float timer = 0f;
+    
         while(true)
         {
             timer += Time.deltaTime;
-            center.alpha = Mathf.PingPong(Time.time * 0.5f, 1f);
+            center.alpha = Mathf.PingPong(timer * 0.5f, 1f);
             center.text = texts[i];
             if(timer > 4f)
             {

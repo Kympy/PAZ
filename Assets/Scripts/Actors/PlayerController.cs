@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 [RequireComponent(typeof(InputManager))]
 public class PlayerController : MonoBehaviour
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float groundDistance = 0.25f;
 
     [SerializeField, Range(0f, 200f)] private float mouseSensitivity_X = 100f;
-    [SerializeField, Range(0f, 200f)] private float mouseSensitivity_Y = 100f;
+    //[SerializeField, Range(0f, 200f)] private float mouseSensitivity_Y = 100f;
     [SerializeField, Range(0f, 500f)] private float turnMultiplier = 300f;
     [SerializeField, Range(0f, 1000f)] private float gunRange = 500f;
 
@@ -61,12 +62,16 @@ public class PlayerController : MonoBehaviour
     private bool IsGun = false;
     private bool IsFire = false;
     private bool Reloading = false;
+    private bool IsDead = false;
+    private bool HasGun = false;
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
-
+    // timer
     private WaitForSecondsRealtime oneSec = new WaitForSecondsRealtime(1f);
-
+    // Cam
+    private CinemachineVirtualCamera followCam = null;
+    private CinemachineVirtualCamera deathCam = null; // When player die
     // temp
     private RaycastHit hit; // temp hit
     private float xRotate;
@@ -77,6 +82,10 @@ public class PlayerController : MonoBehaviour
         _InputManager = GetComponent<InputManager>();
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
+        followCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CinemachineVirtualCamera>();
+        deathCam = GameObject.FindGameObjectWithTag("DeathCam").GetComponent<CinemachineVirtualCamera>();
+        deathCam.enabled = false;
+        //GetComponent<Collider>().enabled = true;
 
         fakeAxe = GameObject.FindGameObjectWithTag("FakeAxe");
         fakeGun = GameObject.FindGameObjectWithTag("FakeGun");
@@ -106,34 +115,43 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Movement();
+        if (IsDead == false)
+        {
+            Movement();
+        }
     }
     private void Update()
     {
-        IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
-        IsJump = _InputManager.Jump;
-        IsAim = _InputManager.RightClicking;
-
-        MouseCamera();
-        Jump();
-        Axe();
-        Aim();
-        Fire();
-        Reload();
-        if(Input.GetKeyDown(KeyCode.F))
+        if (IsDead == false)
         {
+            IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
+            IsJump = _InputManager.Jump;
+            IsAim = _InputManager.RightClicking;
 
-            DecreaseHP(100f); 
+            MouseCamera();
+            Jump();
+            Axe();
+            Aim();
+            Fire();
+            Reload();
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+
+                DecreaseHP(100f);
+            }
+
+            SlotChange();
+            ShowMap();
+            AnimationPlay();
+            ResetLegMovement();
         }
-
-        SlotChange();
-        ShowMap();
-        AnimationPlay();
-        ResetLegMovement();
     }
     private void LateUpdate()
     {
-        UpperBodyRotate();
+        if (IsDead == false)
+        {
+            UpperBodyRotate();
+        }
     }
     private void Movement() // Character Movement And Rotation
     {
@@ -260,14 +278,14 @@ public class PlayerController : MonoBehaviour
                 {
                     if (moveSpeed > WalkSpeed)
                     {
-                        moveSpeed -= 0.03f;
+                        moveSpeed -= 0.1f;
                         if (moveSpeed < WalkSpeed) moveSpeed = WalkSpeed;
                     }
                     else moveSpeed = WalkSpeed;
                 }
                 else if (_InputManager.Vertical > 0 && _InputManager.Sprint)
                 {
-                    moveSpeed += 0.05f;
+                    moveSpeed += 0.1f;
                     if (moveSpeed > RunSpeed) moveSpeed = RunSpeed;
                 }
                 else if (_InputManager.Vertical < 0)
@@ -284,7 +302,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    moveSpeed -= 0.03f;
+                    moveSpeed -= 0.1f;
                     if (moveSpeed < 0f) moveSpeed = 0f;
                 }
             }
@@ -370,7 +388,7 @@ public class PlayerController : MonoBehaviour
                 temp.transform.position = muzzleEffect.transform.position; // set pos
                 temp.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward * gunRange); // set rot
      
-                Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * gunRange, Color.red);
+                Debug.DrawRay(followCam.transform.position + gunRayOffset, followCam.transform.forward * gunRange, Color.red);
                 if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, gunRange)) // Shoot ray
                 {
                     if (hit.transform.CompareTag("Enemy")) // Is that a Zombie ?
@@ -446,7 +464,7 @@ public class PlayerController : MonoBehaviour
     }
     private void SlotChange() // Num1 Num2
     {
-        if(_InputManager.Slot1 && IsGun == false) // Not equip gun, Have gun
+        if(_InputManager.Slot1 && IsGun == false && HasGun) // Not equip gun, Have gun
         {
             GunMode();
         }
@@ -496,8 +514,12 @@ public class PlayerController : MonoBehaviour
     {
         if(currentHP <= 0)
         {
+            IsDead = true;
+            GetComponent<Collider>().enabled = false;
+            _Rigidbody.useGravity = false;
             _Animator.SetTrigger("IsDead");
-            Debug.Log("Die");
+            deathCam.enabled = true;
+            followCam.enabled = false;
         }
     }
 #if UNITY_EDITOR

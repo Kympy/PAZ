@@ -7,11 +7,8 @@ public class ZombiePool : Singleton<ZombiePool>
     private Queue<ZombieBase> NormalPool = new Queue<ZombieBase>();
     
     private NormalZombie NormalPrefab = null;
-    private GameObject GhoulPrefab = null;
-    private GameObject PowerPrefab = null;
 
     private int NormalMax = 10;
-    private int GhoulMax = 20;
     public override void Awake()
     {
         Debug.LogWarning("@@ : Zombie Pool Awake");
@@ -51,20 +48,7 @@ public class ZombiePool : Singleton<ZombiePool>
     }
     public void ReturnZombie(ZombieBase obj)
     {
-        if (obj.MyName == "Normal")
-        {
-            NormalPool.Enqueue(obj);
-        }
-        else if (obj.MyName == "Ghoul")
-        {
-
-        }
-        else if (obj.MyName == "Power")
-        {
-
-        }
-        else Debug.LogError("Return Zombie : Zombie Name Error");
-
+        NormalPool.Enqueue(obj);
         obj.transform.SetParent(this.transform);
         obj.gameObject.SetActive(false);
     }
