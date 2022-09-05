@@ -80,13 +80,14 @@ public class PlayerController : MonoBehaviour
     private RaycastHit hit; // temp hit
     private float xRotate;
     private Bullet temp;
+    private Vector3 originFocus;
     private void Awake()
     {
         currentHP = MaxHP;
         _InputManager = GetComponent<InputManager>();
         _Animator = GetComponent<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
-        followCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CinemachineVirtualCamera>();
+        followCam = GameObject.FindGameObjectWithTag("FollowCam").GetComponent<CinemachineVirtualCamera>();
         deathCam = GameObject.FindGameObjectWithTag("DeathCam").GetComponent<CinemachineVirtualCamera>();
         deathCam.enabled = false;
         //GetComponent<Collider>().enabled = true;
@@ -334,6 +335,11 @@ public class PlayerController : MonoBehaviour
         
         // Horizontal
         focusPoint.transform.parent.Rotate(Input.GetAxis("Mouse X") * mouseSensitivity_X * Time.deltaTime * transform.up);
+
+        if(Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            Camera.main.fieldOfView = Input.GetAxis("Mouse ScrollWheel") * 10f + Camera.main.fieldOfView;
+        }
     }
     private void UpperBodyRotate()
     {
@@ -426,12 +432,13 @@ public class PlayerController : MonoBehaviour
                         GunMode(); // Change mode
                         Destroy(hit.transform.gameObject); // destroy grounded prop
                     }
-                    else if(hit.transform.CompareTag("DropHealth"))
+                    else if(hit.transform.CompareTag("DropHealth")) // Health recover items
                     {
                         itemCount++;
+                        UIManager.Instance.UpdateItemCount(itemCount);
                         Destroy(hit.transform.gameObject);
                     }
-                    else if(hit.transform.CompareTag("DropBullet"))
+                    else if(hit.transform.CompareTag("DropBullet")) // Bullet items
                     {
                         haveBulletCount += (int)(Random.Range(15, 51));
                         UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
@@ -445,13 +452,16 @@ public class PlayerController : MonoBehaviour
     {
         if(IsAim)
         {
-            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 37f, Time.deltaTime * 5f);
+            //focusPoint.transform.position = Vector3.Lerp(focusPoint.transform.position, originFocus * 2f, Time.deltaTime * 5f);
+            followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 37f, Time.deltaTime * 5f);
+            Debug.Log(followCam.m_Lens.FieldOfView);
             transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
             focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
         }
         else
         {
-            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 60f, Time.deltaTime * 8f);
+            //focusPoint.transform.position = Vector3.Lerp(focusPoint.transform.position, originFocus + focusPoint.transform.forward * 2f, Time.deltaTime * 5f);
+            followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 60f, Time.deltaTime * 8f);
         }
     }
     private void Reload()

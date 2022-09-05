@@ -12,6 +12,7 @@ public class UIManager : Singleton<UIManager>
     private Camera MapCamera = null;
     private TextMeshProUGUI areaDiscover = null;
     private GameObject OpenText = null; // When mouse over on locked door.
+    private TextMeshProUGUI itemCount = null;
 
     // Game UI
     private CanvasGroup UICanvas = null;
@@ -24,6 +25,7 @@ public class UIManager : Singleton<UIManager>
     {
         currentBullet = GameObject.Find("CurrentBullet").GetComponent<TextMeshProUGUI>();
         hpBar = GameObject.Find("HPBar").GetComponent<Image>();
+        itemCount = GameObject.Find("ItemCount").GetComponent<TextMeshProUGUI>();
 
         MapCamera = GameObject.FindGameObjectWithTag("MapCamera").GetComponent<Camera>();
         MapCamera.enabled = false;
@@ -48,6 +50,10 @@ public class UIManager : Singleton<UIManager>
             currentBullet.color = Color.red;
         }
         else currentBullet.color = Color.white;
+    }
+    public void UpdateItemCount(int current)
+    {
+        itemCount.text = " : " + current.ToString();
     }
     public void UpdateBar(float current, float max) // Update coroutine start
     {
