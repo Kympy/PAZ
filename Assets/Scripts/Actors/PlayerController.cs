@@ -21,9 +21,13 @@ public class PlayerController : MonoBehaviour
     private float turnDirection = 0f; // Use to rotate character
     private float fireTimer = 0f; // Fire timer
     private const float fireTime = 0.15f; // My gun fire rate
+    // Bullet
     private int bulletCount = 30; // current Ammo count
     private const int maxBulletCount = 30; // Max Ammo
     private int haveBulletCount = 9999;
+    // Health
+    private int itemCount = 2;
+    // HP
     private float currentHP;
     private float MaxHP = 1000f;
 
@@ -416,10 +420,22 @@ public class PlayerController : MonoBehaviour
                 if(_InputManager.E) // Get
                 {
                     Debug.Log(hit.transform.name);
-                    if (hit.transform.CompareTag("DropGun")) // Is gun?
+                    if (hit.transform.CompareTag("DropGun") && HasGun == false) // Is gun? & I dont have a gun
                     {
+                        HasGun = true;
                         GunMode(); // Change mode
                         Destroy(hit.transform.gameObject); // destroy grounded prop
+                    }
+                    else if(hit.transform.CompareTag("DropHealth"))
+                    {
+                        itemCount++;
+                        Destroy(hit.transform.gameObject);
+                    }
+                    else if(hit.transform.CompareTag("DropBullet"))
+                    {
+                        haveBulletCount += (int)(Random.Range(15, 51));
+                        UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
+                        Destroy(hit.transform.gameObject);
                     }
                 }
             }

@@ -6,9 +6,12 @@ public class GhoulZombie : ZombieBase
 {
     private BoxCollider attackCollider = null;
 
-    private WaitForSeconds getUpTime = new WaitForSeconds(2f);
+    private WaitForSeconds getUpTime = new WaitForSeconds(7f);
+    private WaitForSeconds jumpAttackTime = new WaitForSeconds(3.21f);
 
     private float jumpAttackRange;
+    private bool secondDeath = false;
+    private Coroutine jumpCoroutine = null;
 
     private ZombieData data = new ZombieData();
     public override void Awake()
@@ -23,7 +26,7 @@ public class GhoulZombie : ZombieBase
         // Time
         _Agent.stoppingDistance = attackRange;
         rotateSpeed = 5f;
-        attackTime = new WaitForSeconds(1.2f);
+        attackTime = new WaitForSeconds(2.2f);
         hitFrontTime = new WaitForSeconds(1.2f);
         hitBackTime = new WaitForSeconds(2.15f);
         base.Start();
@@ -40,14 +43,12 @@ public class GhoulZombie : ZombieBase
         walkSpeed = myData.WalkSpeed;
         runSpeed = myData.RunSpeed;
         jumpPower = 5f;
-        jumpAttackRange = attackRange * 6f;
+        jumpAttackRange = attackRange * 2f;
     }
     public override IEnumerator Idle_State() // Lay
     {
         findTimer = 0.5f;
-        _Agent.enabled = true;
-        _Agent.isStopped = true;
-        _Agent.speed = 0f;
+        StopAgent();
 
         while (true)
         {
@@ -88,25 +89,27 @@ public class GhoulZombie : ZombieBase
     public override IEnumerator Scream_State() // >> GetUp_State
     {
         StopAgent();
+        ZombieIcon.SetActive(true);
         _Animator.SetTrigger("GetUp"); // Get up
         yield return getUpTime;
-        NextState(State.Attack);
+        NextState(State.Move);
     }
     public override IEnumerator Move_State() // Run State. Chase Player to Attack Range
     {
         _Agent.isStopped = false;
         _Agent.speed = runSpeed;
+        _Animator.SetBool("IsMove", true);
         while (true)
         {
             if (visibleTarget == null) // Not find player yet
             {
+                _Animator.SetBool("IsMove", false);
                 NextState(State.Idle);
-                yield break;
             }
             if ((visibleTarget.transform.position - transform.position).magnitude <= jumpAttackRange) // Player is in my attack range
             {
+                _Animator.SetBool("IsMove", false);
                 NextState(State.Attack);
-                yield break;
             }
             else // Chase Player
             {
@@ -132,27 +135,97 @@ public class GhoulZombie : ZombieBase
             else
             {
                 // Look Player
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(visibleTarget.transform.position - transform.position), 0.5f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(visibleTarget.transform.position - transform.position), 3f);
+                //transform.LookAt(visibleTarget.transform.position);
             }
 
-            if ((visibleTarget.transform.position - transform.position).magnitude <= jumpAttackRange) // Player is in my attack range
-            {
-                _Animator.SetTrigger("JumpAttack");
-                _Rigidbody.AddForce(transform.forward * jumpPower, ForceMode.Impulse);
-                yield return attackTime;
-            }
-            else if ((visibleTarget.transform.position - transform.position).magnitude <= attackRange)
+            if ((visibleTarget.transform.position - transform.position).magnitude <= attackRange) // Melee Attack range
             {
                 _Animator.SetTrigger("IsAttack"); // Attack Animation
                 yield return attackTime;
             }
-            else // Player is far from attack range
+            else if ((visibleTarget.transform.position - transform.position).magnitude >= jumpAttackRange) // Far enough >> Jump Attack
+            {
+                _Animator.SetTrigger("JumpAttack");
+
+                //if(jumpCoroutine == null)
+                //{
+                    //jumpCoroutine = StartCoroutine(JumpAttack());
+                //}
+                yield return jumpAttackTime;
+            }
+            else // Player is far but, closer than jump attack range
             {
                 NextState(State.Move);
                 yield break;
             }
             yield return null;
         }
+    }
+    private IEnumerator JumpAttack()
+    {
+        while(true)
+        {
+            _Rigidbody.AddForce(transform.forward * jumpPower, ForceMode.Impulse);
+            Debug.Log("Impulse");
+            if ((_Rigidbody.position - visibleTarget.transform.position).magnitude <= attackRange)
+            {
+                jumpCoroutine = null;
+                yield break;
+            }
+            yield return new WaitForFixedUpdate();
+        }
+    }
+    public IEnumerator Null_State()
+    {
+        _Animator.SetBool("IsCrawl", true);
+        _Agent.enabled = true;
+        _Agent.isStopped = false;
+        _Agent.speed = walkSpeed;
+        _Rigidbody.useGravity = true;
+        this.GetComponent<Collider>().enabled = true;
+        while (true)
+        {
+            if (visibleTarget == null) // Not find player yet
+            {
+                _Animator.SetTrigger("CrawlDeath");
+                Destroy(this.gameObject, 3f);
+            }
+            else // Chase Player
+            {
+                if (_Agent.pathPending == false)
+                {
+                    _Agent.SetDestination(visibleTarget.transform.position);
+                }
+            }
+            yield return null;
+        }
+    }
+    public override IEnumerator GunHit_State()
+    {
+        if (currentHP > 0)
+        {
+            StopAgent();
+            GunDamage();
+        }
+        else
+        {
+            if(secondDeath)
+            {
+                StopAgent();
+                _Agent.enabled = false;
+                _Rigidbody.useGravity = false;
+                this.GetComponent<Collider>().enabled = false;
+                _Animator.SetTrigger("CrawlDeath");
+                yield return deadBodyTime;
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                NextState(State.Death);
+            }
+        }
+        yield return null;
     }
     public override IEnumerator Death_State()
     {
@@ -161,8 +234,17 @@ public class GhoulZombie : ZombieBase
         _Rigidbody.useGravity = false;
         this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathForward");
-        yield return deadBodyTime;
-        Destroy(this.gameObject);
+        if(RandomCase() == 0)
+        {
+            yield return deadBodyTime;
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            yield return deadBodyTime;
+            NextState(State.Null);
+            secondDeath = true;
+        }
     }
     public override IEnumerator BackDeath_State()
     {
@@ -171,12 +253,21 @@ public class GhoulZombie : ZombieBase
         _Rigidbody.useGravity = false;
         this.GetComponent<Collider>().enabled = false;
         _Animator.SetTrigger("DeathBackward");
-        yield return deadBodyTime;
-        Destroy(this.gameObject);
+        if (RandomCase() == 0)
+        {
+            yield return deadBodyTime;
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            yield return deadBodyTime;
+            NextState(State.Null);
+            secondDeath = true;
+        }
     }
-    public IEnumerator Null_State()
+    private int RandomCase()
     {
-        yield return null;
+        return Random.Range(0, 2);
     }
     public void AttackTriggerOn()
     {

@@ -72,6 +72,8 @@ public class ZombieBase : MonoBehaviour
     // Target mask�� ray hit�� transform�� �����ϴ� ����Ʈ
     protected GameObject visibleTarget = null;
     public GameObject VisibleTarget { get; }
+    //Icon
+    protected GameObject ZombieIcon = null;
 
     // temp memories
     protected Transform targetTransform;
@@ -92,6 +94,8 @@ public class ZombieBase : MonoBehaviour
         _Rigidbody = GetComponent<Rigidbody>();
         targetMask = 1 << LayerMask.NameToLayer("Player");
         obstacleMask = 1 << LayerMask.NameToLayer("Terrain");
+        ZombieIcon = transform.GetChild(0).gameObject;
+        ZombieIcon.SetActive(false);
     }
     public virtual void Start()
     {
@@ -165,6 +169,7 @@ public class ZombieBase : MonoBehaviour
     public virtual IEnumerator Scream_State()
     {
         StopAgent();
+        ZombieIcon.SetActive(true);
         _Animator.SetTrigger("IsScream"); // Do Scream
         yield return screamTime;
         NextState(State.Move);
@@ -246,7 +251,7 @@ public class ZombieBase : MonoBehaviour
         yield return hitFrontTime;
         NextState(State.Idle);
     }
-    public IEnumerator GunHit_State()
+    public virtual IEnumerator GunHit_State()
     {
         if (currentHP > 0)
         {

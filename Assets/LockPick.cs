@@ -121,7 +121,11 @@ public class LockPick : MonoBehaviour
                         breakTimer += Time.unscaledDeltaTime;
                         if (breakTimer > brokenTime)
                         {
-                            effectCoroutine = StartCoroutine(FailEffect());
+                            if(effectCoroutine == null)
+                            {
+                                effectCoroutine = StartCoroutine(FailEffect());
+                            }
+
                             breakTimer = 0f;
                             waitReset = true;
                             Debug.LogError("Broken!");
@@ -155,10 +159,6 @@ public class LockPick : MonoBehaviour
 
     private IEnumerator FailEffect()
     {
-        if (effectCoroutine != null)
-        {
-            yield break;
-        }
         smoke.SetActive(true);
         smoke.GetComponent<ParticleSystem>().Play();
 
