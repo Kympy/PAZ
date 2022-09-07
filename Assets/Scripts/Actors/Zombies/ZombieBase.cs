@@ -292,14 +292,6 @@ public class ZombieBase : MonoBehaviour
         yield return deadBodyTime;
         ZombiePool.Instance.ReturnZombie(this);
     }
-    public virtual void OnAttackEvent()
-    {
-
-    }
-    public void OnHitEvent()
-    {
-        //NextState(State.Idle);
-    }
     public void OnCollisionEnter(Collision collision) // Collision by Axe
     {
         if (collision.gameObject.CompareTag("RealAxe"))
@@ -336,9 +328,14 @@ public class ZombieBase : MonoBehaviour
                     //Debug.Log("## 01 - 1 FIND / Find Target Name : " + visibleTarget.name + "  Position : " + visibleTarget.transform.position);
                     _Animator.SetBool("IsIdle", false);
                     NextState(State.Scream); // Do Scream
+                    
                 }
             }
         }
+    }
+    public virtual IEnumerator Null_State()
+    {
+        yield return null;
     }
     public void StopAgent() // Stop Agent movement
     {

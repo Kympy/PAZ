@@ -11,7 +11,6 @@ public class GhoulZombie : ZombieBase
 
     private float jumpAttackRange;
     private bool secondDeath = false;
-    private Coroutine jumpCoroutine = null;
 
     private ZombieData data = new ZombieData();
 
@@ -22,6 +21,8 @@ public class GhoulZombie : ZombieBase
         attackCollider.enabled = false;
         data = DataManager.Instance.GetZombieData("Ghoul");
         currentState = State.Null;
+        _Agent.enabled = true;
+        StopAgent();
         InitData(data);
     }
     public override void Start()
@@ -46,13 +47,11 @@ public class GhoulZombie : ZombieBase
         walkSpeed = myData.WalkSpeed;
         runSpeed = myData.RunSpeed;
         jumpPower = 5f;
-        jumpAttackRange = attackRange * 2f;
+        jumpAttackRange = 10f;
     }
     public override void NextState(State NewState)
     {
-        Debug.Log(currentState);
         base.NextState(NewState);
-        Debug.Log(currentState);
     }
     public override IEnumerator Idle_State() // Lay
     {
@@ -91,6 +90,7 @@ public class GhoulZombie : ZombieBase
                 {
                     visibleTarget = targetTransform.gameObject;
                     NextState(State.Scream); // Do Get up state
+                    break;
                 }
             }
         }
@@ -105,6 +105,7 @@ public class GhoulZombie : ZombieBase
     }
     public override IEnumerator Move_State() // Run State. Chase Player to Attack Range
     {
+        Debug.Log("Move");
         _Agent.isStopped = false;
         _Agent.speed = runSpeed;
         _Animator.SetBool("IsMove", true);
@@ -134,6 +135,7 @@ public class GhoulZombie : ZombieBase
     }
     public override IEnumerator Attack_State()
     {
+        Debug.Log("Attack");
         StopAgent();
         while (true)
         {
@@ -155,7 +157,7 @@ public class GhoulZombie : ZombieBase
                 _Animator.SetTrigger("IsAttack"); // Attack Animation
                 yield return attackTime;
             }
-            else if ((visibleTarget.transform.position - transform.position).magnitude >= jumpAttackRange) // Far enough >> Jump Attack
+            else if ((visibleTarget.transform.position - transform.position).magnitude <= jumpAttackRange) // Far enough >> Jump Attack
             {
                 _Animator.SetTrigger("JumpAttack");
 
@@ -173,7 +175,7 @@ public class GhoulZombie : ZombieBase
             yield return null;
         }
     }
-    public IEnumerator Null_State()
+    public override IEnumerator Null_State()
     {
         _Animator.SetBool("IsCrawl", true);
         _Agent.enabled = true;
@@ -210,60 +212,46 @@ public class GhoulZombie : ZombieBase
         }
         else
         {
-            if(secondDeath)
-            {
-                StopAgent();
-                _Agent.enabled = false;
-                _Rigidbody.useGravity = false;
-                this.GetComponent<Collider>().enabled = false;
-                _Animator.SetBool("IsCrawl", false);
-                yield return deadBodyTime;
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                NextState(State.Death);
-            }
+            NextState(State.Death);
         }
         yield return null;
     }
     public override IEnumerator Death_State()
     {
-        StopAgent();
-        _Agent.enabled = false;
-        _Rigidbody.isKinematic = true;
-        this.GetComponent<Collider>().isTrigger = true;
-        _Animator.SetTrigger("DeathForward");
-        if(RandomCase() == 0)
+        if (secondDeath)
         {
+            StopAgent();
+            _Agent.enabled = false;
+            _Rigidbody.useGravity = false;
+            this.GetComponent<Collider>().enabled = false;
+            _Animator.SetBool("IsCrawl", false);
             yield return deadBodyTime;
             Destroy(this.gameObject);
         }
         else
         {
-            yield return deadBodyTime;
-            NextState(State.Null);
-            secondDeath = true;
+            StopAgent();
+            _Agent.enabled = false;
+            _Rigidbody.isKinematic = true;
+            this.GetComponent<Collider>().isTrigger = true;
+            _Animator.SetTrigger("DeathForward");
+            if (RandomCase() == 0)
+            {
+                yield return deadBodyTime;
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                yield return deadBodyTime;
+                secondDeath = true;
+                NextState(State.Null);
+            }
         }
     }
     public override IEnumerator BackDeath_State()
     {
-        StopAgent();
-        _Agent.enabled = false;
-        _Rigidbody.useGravity = false;
-        this.GetComponent<Collider>().enabled = false;
-        _Animator.SetTrigger("DeathBackward");
-        if (RandomCase() == 0)
-        {
-            yield return deadBodyTime;
-            Destroy(this.gameObject);
-        }
-        else
-        {
-            yield return deadBodyTime;
-            NextState(State.Null);
-            secondDeath = true;
-        }
+        NextState(State.Death);
+        yield return null;
     }
     private int RandomCase()
     {
