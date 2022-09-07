@@ -127,7 +127,7 @@ public class ZombieBase : MonoBehaviour
             NextState(State.Death);
         }
     }
-    public void NextState(State NewState) // Get Next Coroutine
+    public virtual void NextState(State NewState) // Get Next Coroutine
     {
         if (NewState == currentState) return; // If new state is same with current state, exit
         if (previousCoroutine != null) StopCoroutine(previousCoroutine); // If there is available previous coroutine, remove it.
@@ -157,7 +157,6 @@ public class ZombieBase : MonoBehaviour
                 desiredPos = new Vector3(Random.Range(transform.position.x - moveOffset, transform.position.x + moveOffset),
                     transform.position.y, Random.Range(transform.position.z - moveOffset, transform.position.z + moveOffset));
                 moveTimer = 0f;
-                Debug.Log("## 01 IDLE / Set Random Pos : " + desiredPos);
             }
             if(_Agent.pathPending == false)
             {
@@ -197,7 +196,7 @@ public class ZombieBase : MonoBehaviour
                     _Agent.SetDestination(visibleTarget.transform.position);
                 }
 
-                Debug.Log("## 02 MOVE / Chasing Target : " + visibleTarget.name + " Position : " + visibleTarget.transform.position);
+                //Debug.Log("## 02 MOVE / Chasing Target : " + visibleTarget.name + " Position : " + visibleTarget.transform.position);
             }
             yield return null;
         }
@@ -210,7 +209,7 @@ public class ZombieBase : MonoBehaviour
             if (visibleTarget == null)
             {
                 _Animator.SetTrigger("MissPlayer");
-                Debug.Log("## 03 ATTACK / Name : " + this.name + " Miss Player.");
+                //Debug.Log("## 03 ATTACK / Name : " + this.name + " Miss Player.");
                 NextState(State.Idle);
                 yield break;
             }
@@ -225,7 +224,7 @@ public class ZombieBase : MonoBehaviour
             {
                 _Animator.SetTrigger("IsAttack"); // Attack Animation
                 yield return attackTime;
-                Debug.Log("## 03 ATTACK / Name : " + this.name + " Attacked Player!!");
+                //Debug.Log("## 03 ATTACK / Name : " + this.name + " Attacked Player!!");
             }
             else // Player is far from attack range
             {
@@ -239,7 +238,7 @@ public class ZombieBase : MonoBehaviour
     {
         StopAgent();
         _Animator.SetTrigger("HitForward");
-        Debug.Log("## 04 HIT FORWARD");
+        //Debug.Log("## 04 HIT FORWARD");
         yield return hitBackTime;
         NextState(State.Idle);
     }
@@ -247,7 +246,7 @@ public class ZombieBase : MonoBehaviour
     {
         StopAgent();
         _Animator.SetTrigger("HitBackward");
-        Debug.Log("## 04 HIT BACKWARD");
+        //Debug.Log("## 04 HIT BACKWARD");
         yield return hitFrontTime;
         NextState(State.Idle);
     }
@@ -334,7 +333,7 @@ public class ZombieBase : MonoBehaviour
                 if (!Physics.Raycast(transform.position, dir2Target, distance2Target, obstacleMask))
                 {
                     visibleTarget = targetTransform.gameObject;
-                    Debug.Log("## 01 - 1 FIND / Find Target Name : " + visibleTarget.name + "  Position : " + visibleTarget.transform.position);
+                    //Debug.Log("## 01 - 1 FIND / Find Target Name : " + visibleTarget.name + "  Position : " + visibleTarget.transform.position);
                     _Animator.SetBool("IsIdle", false);
                     NextState(State.Scream); // Do Scream
                 }

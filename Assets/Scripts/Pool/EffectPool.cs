@@ -10,11 +10,11 @@ public class EffectPool : Singleton<EffectPool>
     private int maxCount = 20;
     public override void Awake()
     {
-        InitPool();
-        Debug.LogWarning("@@ : EffectPool Awake");
+        base.Awake();
     }
-    private void InitPool()
+    public void InitPool()
     {
+        Debug.LogWarning("@@ : EffectPool Awake");
         normalEffect.Clear();
         bloodEffect.Clear();
 

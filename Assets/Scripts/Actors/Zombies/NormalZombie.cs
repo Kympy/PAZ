@@ -9,6 +9,7 @@ public class NormalZombie : ZombieBase
     {
         base.Awake();
         attackCollider = GetComponentInChildren<BoxCollider>();
+        attackCollider.enabled = false;
     }
     public override void Start()
     {

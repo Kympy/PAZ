@@ -26,6 +26,8 @@ TagManager:
   - DeathCam
   - FollowCam
   - DropBullet
+  - Key
+  - KeyHole
   layers:
   - Default
   - TransparentFX

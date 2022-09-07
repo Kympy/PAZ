@@ -12,9 +12,20 @@ public class SpawnArea : MonoBehaviour
 	[SerializeField] private int maxCount = 10;
 	private int currentCount = 0;
 
-    private void OnTriggerEnter(Collider other)
+	private Coroutine spawnCoroutine = null;
+	private void OnDestroy()
+	{
+		StopAllCoroutines();
+	}
+	private void OnTriggerEnter(Collider other)
     {
-		StartCoroutine(Spawn());
+		if (other.gameObject.CompareTag("Player"))
+		{
+			if(spawnCoroutine == null)
+            {
+				StartCoroutine(Spawn());
+			}
+		}
 	}
     private IEnumerator Spawn()
 	{
@@ -24,14 +35,15 @@ public class SpawnArea : MonoBehaviour
 
 			if (currentCount >= maxCount) // To max count
             {
+				spawnCoroutine = null;
 				yield break;
             }
 
 			// 몬스터풀에 몬스터 1개를 생성 요청
 			ZombieBase mob = ZombiePool.Instance.GetNormalZombie();
 			mob.transform.position = GetRandomPos();// GetRandomPos();
-			Debug.Log("This : " + transform.position);
-			Debug.Log("Random : " + GetRandomPos());
+			//Debug.Log("This : " + transform.position);
+			//Debug.Log("Random : " + GetRandomPos());
 			mob.InitData(DataManager.Instance.GetZombieData("Normal"));
 			currentCount++;
 		}

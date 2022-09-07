@@ -22,14 +22,14 @@ public class PlayerController : MonoBehaviour
     private float fireTimer = 0f; // Fire timer
     private const float fireTime = 0.15f; // My gun fire rate
     // Bullet
-    public int bulletCount = 30; // current Ammo count
-    private const int maxBulletCount = 30; // Max Ammo
-    public int haveBulletCount = 9999;
+    public int bulletCount = 40; // current Ammo count
+    private const int maxBulletCount = 40; // Max Ammo
+    public int haveBulletCount = 0;
     // Health
     public int itemCount = 2;
     // HP
     public float currentHP;
-    private float MaxHP = 1000f;
+    public float MaxHP = 1000f;
     // Key
     public int keyCount = 0;
 
@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
     private bool IsDead = false;
     public bool HasGun = false;
 
+    private bool Stop = false;
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
     // timer
@@ -83,6 +84,10 @@ public class PlayerController : MonoBehaviour
     private float xRotate;
     private Bullet temp;
     private Vector3 originFocus;
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     private void Awake()
     {
         currentHP = MaxHP;
@@ -122,14 +127,18 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (IsDead == false)
+        if (IsDead == false && Stop == false)
         {
             Movement();
         }
     }
     private void Update()
     {
-        if (IsDead == false)
+        if(Input.GetKeyDown(KeyCode.Return))
+        {
+            GameManager.Instance.Test();
+        }
+        if (IsDead == false && Stop == false)
         {
             IsMove = _InputManager.HasVerticalInput || _InputManager.HasHorizontalInput;
             IsJump = _InputManager.Jump;
@@ -137,7 +146,6 @@ public class PlayerController : MonoBehaviour
 
             MouseCamera();
             Jump();
-            Axe();
             Aim();
             Fire();
             Reload();
@@ -154,16 +162,13 @@ public class PlayerController : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            UIManager.Instance.ShowESC(true);
-        }
-        else if(Input.GetKeyUp(KeyCode.Escape))
-        {
-            UIManager.Instance.ShowESC(false);
+            Stop = !Stop;
+            UIManager.Instance.ShowESC(Stop);
         }
     }
     private void LateUpdate()
     {
-        if (IsDead == false)
+        if (IsDead == false && Stop == false)
         {
             UpperBodyRotate();
         }
@@ -214,13 +219,6 @@ public class PlayerController : MonoBehaviour
             finalVector.Normalize(); // Normalize movement vector
             _Rigidbody.position += moveSpeed * Time.deltaTime * finalVector; // Do Movement
             */
-        }
-    }
-    private void Axe()
-    {
-        if(_InputManager.LeftClick)
-        {
-            _Animator.SetTrigger("First");
         }
     }
     private bool IsGrounded()
@@ -336,7 +334,7 @@ public class PlayerController : MonoBehaviour
         relativeVector /= relativeVector.magnitude;
         turnDirection = (relativeVector.x / relativeVector.magnitude);
 
-        xRotate = focusPoint.transform.localEulerAngles.x - Input.GetAxis("Mouse Y"); // Get X rotate
+        xRotate = focusPoint.transform.localEulerAngles.x - Input.GetAxis("Mouse Y") * Time.deltaTime * 100f; // Get X rotate
         xRotate = xRotate > 180 ? xRotate - 360 : xRotate; // Get X rotate when x have minus value
         xRotate = Mathf.Clamp(xRotate, -25, 60); // Clamp angles
 
@@ -348,7 +346,7 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            Camera.main.fieldOfView = Input.GetAxis("Mouse ScrollWheel") * 10f + Camera.main.fieldOfView;
+            followCam.m_Lens.FieldOfView = Input.GetAxis("Mouse ScrollWheel") * 10f + followCam.m_Lens.FieldOfView;
         }
     }
     private void UpperBodyRotate()
@@ -382,7 +380,12 @@ public class PlayerController : MonoBehaviour
     }
     private void Fire()
     {
-        if(_InputManager.LeftClicking && IsAim == false) // Rotate Forward
+        if (_InputManager.LeftClick && IsGun == false)
+        {
+            _Animator.SetTrigger("First");
+            return;
+        }
+        if (_InputManager.LeftClicking && IsAim == false) // Rotate Forward
         {
             transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
             focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
@@ -454,6 +457,11 @@ public class PlayerController : MonoBehaviour
                         UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
                         Destroy(hit.transform.gameObject);
                     }
+                    else if(hit.transform.CompareTag("Key"))
+                    {
+                        keyCount++;
+                        Destroy(hit.transform.gameObject);
+                    }
                 }
             }
         }
@@ -462,21 +470,32 @@ public class PlayerController : MonoBehaviour
     {
         if(IsAim)
         {
-            //focusPoint.transform.position = Vector3.Lerp(focusPoint.transform.position, originFocus * 2f, Time.deltaTime * 5f);
-            followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 37f, Time.deltaTime * 5f);
-            Debug.Log(followCam.m_Lens.FieldOfView);
+            StopCoroutine(nameof(AimDown));
+            followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 35f, Time.deltaTime * 8f);
             transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
             focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
         }
-        else
+        else if(Input.GetMouseButtonUp(1))
         {
-            //focusPoint.transform.position = Vector3.Lerp(focusPoint.transform.position, originFocus + focusPoint.transform.forward * 2f, Time.deltaTime * 5f);
-            followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 60f, Time.deltaTime * 8f);
+            StartCoroutine(AimDown());
+        }
+    }
+    private IEnumerator AimDown()
+    {
+        while(true)
+        {
+            followCam.m_Lens.FieldOfView += 5f;
+            if (followCam.m_Lens.FieldOfView > 50f)
+            {
+                followCam.m_Lens.FieldOfView = 50f;
+                yield break;
+            }
+            yield return null;
         }
     }
     private void Reload()
     {
-        if(IsGun && _InputManager.Reload && bulletCount < maxBulletCount && Reloading == false) // Input R
+        if(IsGun && _InputManager.Reload && bulletCount < maxBulletCount && Reloading == false && haveBulletCount > 0) // Input R
         {
             _Animator.SetTrigger("IsReload"); // reload animation
             Reloading = true;
@@ -508,8 +527,14 @@ public class PlayerController : MonoBehaviour
         {
             AxeMode();
         }
+        else if(_InputManager.Slot3 && itemCount > 0) // Item Use
+        {
+            currentHP += MaxHP * 0.5f;
+            if (currentHP > MaxHP) currentHP = MaxHP;
+            UIManager.Instance.UpdateBar(currentHP, MaxHP);
+        }
     }
-    private void GunMode()
+    public void GunMode()
     {
         IsGun = true;
 
@@ -536,7 +561,10 @@ public class PlayerController : MonoBehaviour
         {
             UIManager.Instance.ShowMap(true);
         }
-        else UIManager.Instance.ShowMap(false);
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            UIManager.Instance.ShowMap(false);
+        }
     }
     public void DecreaseHP(float damage) // Get Damage
     {

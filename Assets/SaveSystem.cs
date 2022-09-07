@@ -7,7 +7,9 @@ public static class SaveSystem
 {
 	public struct SaveData
     {
-		public Transform lastPos;
+		public float lastPosX;
+		public float lastPosY;
+		public float lastPosZ;
 		public int currentBullet;
 		public int haveBullet;
 		public float currentHP;

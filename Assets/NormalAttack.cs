@@ -8,7 +8,7 @@ public class NormalAttack : MonoBehaviour
     private void Start() // Because data is initialized at Awake()
     {
         attackPower = GetComponentInParent<ZombieBase>().AttackPower;
-        Debug.Log("Attack power : " + attackPower);
+        //Debug.Log("Attack power : " + attackPower);
     }
     private void OnTriggerEnter(Collider other)
     {

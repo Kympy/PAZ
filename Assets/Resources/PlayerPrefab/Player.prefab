@@ -4846,6 +4846,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99f223ad310fc449b1d459a5a60d30c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletCount: 40
+  haveBulletCount: 0
+  itemCount: 2
+  currentHP: 0
+  MaxHP: 1000
+  keyCount: 0
   WalkSpeed: 2
   RunSpeed: 4.5
   BackSpeed: 2
@@ -4855,6 +4861,7 @@ MonoBehaviour:
   mouseSensitivity_X: 100
   turnMultiplier: 300
   gunRange: 500
+  HasGun: 0
 --- !u!136 &8779883718309931438
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7134,6 +7141,10 @@ PrefabInstance:
     - target: {fileID: 4727584674002981259, guid: e048a401410aa9f4791cdd97e15735ca, type: 3}
       propertyPath: m_Center.x
       value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 4727584674002981259, guid: e048a401410aa9f4791cdd97e15735ca, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e048a401410aa9f4791cdd97e15735ca, type: 3}

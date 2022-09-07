@@ -80,7 +80,7 @@ public class InputManager : Singleton<InputManager>
 
         EKey = Input.GetKeyDown(KeyCode.E);
         reload = Input.GetKeyDown(KeyCode.R);
-        tabKey = Input.GetKey(KeyCode.Tab);
+        tabKey = Input.GetKeyDown(KeyCode.Tab);
 
         leftClick = Input.GetMouseButtonDown(0);
         leftClicking = Input.GetMouseButton(0);

@@ -11,13 +11,13 @@ public class ZombiePool : Singleton<ZombiePool>
     private int NormalMax = 10;
     public override void Awake()
     {
+        base.Awake();
+    }
+    public void InitPool()
+    {
         Debug.LogWarning("@@ : Zombie Pool Awake");
         NormalPrefab = ResourceDataObj.Instance.NormalZombie.GetComponent<NormalZombie>();
 
-        InitPool();
-    }
-    private void InitPool()
-    {
         NormalPool.Clear();
         ZombieBase temp = null;
         for(int i = 0; i < NormalMax; i++)

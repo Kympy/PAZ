@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager>
 {
     private TextMeshProUGUI currentBullet = null;
     private Image hpBar = null;
+    private Image hpBarBack = null;
     public Coroutine UICoroutine = null;
     private Camera MapCamera = null;
     private TextMeshProUGUI areaDiscover = null;
@@ -25,11 +26,19 @@ public class UIManager : Singleton<UIManager>
     private GameObject LockUICam = null;
 
     private WaitForSeconds delayTime = new WaitForSeconds(2f);
-
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
     public override void Awake() // Find components
+    {
+        base.Awake();
+    }
+    public void InitUI()
     {
         currentBullet = GameObject.Find("CurrentBullet").GetComponent<TextMeshProUGUI>();
         hpBar = GameObject.Find("HPBar").GetComponent<Image>();
+        hpBarBack = GameObject.Find("HPBarBack").GetComponent<Image>();
         itemCount = GameObject.Find("ItemCount").GetComponent<TextMeshProUGUI>();
 
         MapCamera = GameObject.FindGameObjectWithTag("MapCamera").GetComponent<Camera>();
@@ -49,9 +58,9 @@ public class UIManager : Singleton<UIManager>
         LoadButton = ESCCanvas.transform.GetChild(1).GetComponent<Button>();
         MainButton = ESCCanvas.transform.GetChild(2).GetComponent<Button>();
 
-        SaveButton.onClick.AddListener();
-        LoadButton.onClick.AddListener();
-        MainButton.onClick.AddListener();
+        SaveButton.onClick.AddListener(delegate { GameManager.Instance.GoToSave(); });
+        LoadButton.onClick.AddListener(delegate { GameManager.Instance.GoToLoad(); });
+        MainButton.onClick.AddListener(delegate { GameManager.Instance.GoToMain(); });
 
         ESCCanvas.alpha = 0f;
         ESCCanvas.interactable = false;
@@ -74,6 +83,11 @@ public class UIManager : Singleton<UIManager>
     }
     public void UpdateBar(float current, float max) // Update coroutine start
     {
+        if(UICoroutine != null)
+        {
+            StopCoroutine(UICoroutine);
+            UICoroutine = null;
+        }
         UICoroutine = StartCoroutine(UpdateHPBar(current, max));
     }
     public void StopUpdateBar() // Stop already executing coroutine
@@ -83,10 +97,16 @@ public class UIManager : Singleton<UIManager>
     }
     private IEnumerator UpdateHPBar(float current, float max)
     {
-        while(true)
+        hpBar.fillAmount = current / max;
+        while (true)
         {
-            hpBar.fillAmount = Mathf.Lerp(hpBar.fillAmount, current / max, Time.deltaTime * 3f);
-            if (Mathf.Approximately(hpBar.fillAmount, current / max)) yield break;
+            hpBarBack.fillAmount = Mathf.Lerp(hpBarBack.fillAmount, current / max, Time.deltaTime * 1.5f);
+            //Debug.Log(hpBarBack.fillAmount);
+            if(Mathf.Approximately(hpBarBack.fillAmount, current / max))
+            {
+                UICoroutine = null;
+                yield break;
+            }
             yield return null;
         }
     }
