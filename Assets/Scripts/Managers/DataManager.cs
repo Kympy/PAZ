@@ -34,10 +34,10 @@ public class DataManager : Singleton<DataManager>
         LoadZombieData();
     }
     #region Zombie Data
-    public void LoadZombieData()
+    public void LoadZombieData() // Get Data CSV
     {
         TextAsset asset = Resources.Load<TextAsset>("Data/ZombieData");
-        string[] lines = asset.text.Split(CRLF);
+        string[] lines = asset.text.Split(CRLF); // Split " "
         
         for(int i = 1; i < lines.Length - 1; i++)
         {

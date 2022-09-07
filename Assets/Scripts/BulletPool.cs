@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletPool : Singleton<BulletPool>
+public class BulletPool : Singleton<BulletPool> // Manage Bullet object
 {
-    private Queue<Bullet> bulletPool = new Queue<Bullet>();
+    private Queue<Bullet> bulletPool = new Queue<Bullet>(); // Queue memory
 
-    private int max = 20;
+    private int max = 20; // Max Queue size
 
     public override void Awake()
     {
         InitPool();
     }
-    private void InitPool()
+    private void InitPool() // Initialize Queue
     {
         bulletPool.Clear();
         Bullet temp = null;
@@ -24,7 +24,7 @@ public class BulletPool : Singleton<BulletPool>
             bulletPool.Enqueue(temp);
         }
     }
-    public Bullet GetBullet()
+    public Bullet GetBullet() // Get Bullet object
     {
         Bullet obj = null;
 

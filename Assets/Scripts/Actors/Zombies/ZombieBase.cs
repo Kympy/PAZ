@@ -23,7 +23,7 @@ public class ZombieBase : MonoBehaviour
         MAX
     }
     public string MyName = "";
-    [SerializeField]protected float currentHP;
+    [SerializeField] protected float currentHP;
     [SerializeField] protected float MaxHP;
     [SerializeField] protected float walkSpeed;
     [SerializeField] protected float runSpeed;
@@ -59,8 +59,8 @@ public class ZombieBase : MonoBehaviour
     protected float viewAngle;
 
     // Properties
-    public float ViewRadius { get; set; }
-    public float ViewAngle { get; set; }
+    public float ViewRadius { get { return viewRadius; } set { viewRadius = value; } }
+    public float ViewAngle { get { return viewAngle; } set { viewAngle = value; } }
 
     // LayerMask
     protected LayerMask targetMask;
@@ -69,9 +69,9 @@ public class ZombieBase : MonoBehaviour
     // Targets which in Radius
     protected Collider[] targetsInViewRadius = null;
 
-    // Target mask�� ray hit�� transform�� �����ϴ� ����Ʈ
+    // Target mask ray hit target
     protected GameObject visibleTarget = null;
-    public GameObject VisibleTarget { get; }
+    public GameObject VisibleTarget { get { return visibleTarget; } }
     //Icon
     protected GameObject ZombieIcon = null;
 
@@ -104,7 +104,7 @@ public class ZombieBase : MonoBehaviour
         _Agent.enabled = true;
         NextState(State.Idle);
     }
-    public virtual void InitData(ZombieData myData) // Get Data
+    public virtual void InitData(ZombieData myData) // Get Data and set
     {
         MyName = myData.Name;
         attackPower = myData.AttackPower;
@@ -234,7 +234,7 @@ public class ZombieBase : MonoBehaviour
             yield return null;
         }
     }
-    public IEnumerator Hit_State()
+    public IEnumerator Hit_State() // Not Use
     {
         StopAgent();
         _Animator.SetTrigger("HitForward");
@@ -250,7 +250,7 @@ public class ZombieBase : MonoBehaviour
         yield return hitFrontTime;
         NextState(State.Idle);
     }
-    public virtual IEnumerator GunHit_State()
+    public virtual IEnumerator GunHit_State() // When hit by bullet
     {
         if (currentHP > 0)
         {
@@ -294,9 +294,9 @@ public class ZombieBase : MonoBehaviour
     }
     public void OnCollisionEnter(Collision collision) // Collision by Axe
     {
-        if (collision.gameObject.CompareTag("RealAxe"))
+        if (collision.gameObject.CompareTag("RealAxe")) // If Axe,
         {
-            if(collision.contacts[0].normal.normalized.z >= 0)
+            if(collision.contacts[0].normal.normalized.z >= 0) // Normal Vector's z value is larger than zero.
             {
                 NextState(State.Death); // Forward Death Animation
             }
@@ -333,7 +333,7 @@ public class ZombieBase : MonoBehaviour
             }
         }
     }
-    public virtual IEnumerator Null_State()
+    public virtual IEnumerator Null_State() // Not yet
     {
         yield return null;
     }
@@ -343,7 +343,7 @@ public class ZombieBase : MonoBehaviour
         _Agent.speed = 0;
     }
 #if UNITY_EDITOR
-    public Vector3 DirFromAngle(float angleDegrees, bool angleIsGlobal)
+    public Vector3 DirFromAngle(float angleDegrees, bool angleIsGlobal) // Get angle to draw gizmos
     {
         if (angleIsGlobal == false)
         {

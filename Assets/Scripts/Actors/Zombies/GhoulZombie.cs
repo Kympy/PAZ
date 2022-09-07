@@ -218,7 +218,7 @@ public class GhoulZombie : ZombieBase
     }
     public override IEnumerator Death_State()
     {
-        if (secondDeath)
+        if (secondDeath) // Real death
         {
             StopAgent();
             _Agent.enabled = false;
@@ -235,7 +235,7 @@ public class GhoulZombie : ZombieBase
             _Rigidbody.isKinematic = true;
             this.GetComponent<Collider>().isTrigger = true;
             _Animator.SetTrigger("DeathForward");
-            if (RandomCase() == 0)
+            if (RandomCase() == 0) // Get 50% percent
             {
                 yield return deadBodyTime;
                 Destroy(this.gameObject);
@@ -243,7 +243,7 @@ public class GhoulZombie : ZombieBase
             else
             {
                 yield return deadBodyTime;
-                secondDeath = true;
+                secondDeath = true; // Will real death
                 NextState(State.Null);
             }
         }

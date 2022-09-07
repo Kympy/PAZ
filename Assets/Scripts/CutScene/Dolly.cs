@@ -8,40 +8,34 @@ using UnityEngine.SceneManagement;
 
 public class Dolly : MonoBehaviour
 {
+    // My Carts
     private CinemachineDollyCart cart;
     private CinemachineDollyCart cart2;
-    private CinemachineSmoothPath track;
-
+    // Actor Character
     private Animator asianAnim;
     private Animator white2Anim;
     private Animator blackAnim;
-
+    // Loading operation
     private AsyncOperation op = null;
-
+    // Effect Object
     private GameObject blood;
     private GameObject Crate;
     private GameObject muzzle;
     private Light cell;
     private Image panel;
-
-    private float timer = 0f;
-
-    private bool first = false;
-    private bool second = false;
-    private bool third = false;
+    // Boolean Flag
     private bool doLight = false;
     private bool doBlack = false;
     private bool load = false;
-
+    // Text UI
     private TextMeshProUGUI center;
     private TextMeshProUGUI bottom;
     private float a = 0f;
 
-    private void Awake()
+    private void Awake() // Finds
     {
         cart = GameObject.Find("Cart1").GetComponent<CinemachineDollyCart>();
         cart2 = GameObject.Find("Cart2").GetComponent<CinemachineDollyCart>();
-        track = GameObject.Find("Track1").GetComponent<CinemachineSmoothPath>();
 
         asianAnim = GameObject.Find("Asian").GetComponent<Animator>();
         white2Anim = GameObject.Find("White2").GetComponent<Animator>();
@@ -56,7 +50,7 @@ public class Dolly : MonoBehaviour
         cell = GameObject.Find("Cell").GetComponentInChildren<Light>();
         panel = GameObject.Find("Panel").GetComponent<Image>();
     }
-    private void Start()
+    private void Start() // Set Cart Speed And Start Coroutine
     {
         cart.m_Speed = 9f;
         center.text = "";
@@ -67,11 +61,11 @@ public class Dolly : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if(doLight)
+        if(doLight) // Cell object's light effect
         {
             cell.intensity = Mathf.PingPong(Time.time * 2f, 3f);
         }
-        if(doBlack)
+        if(doBlack) // UI alpha turn to black
         {
             a += Time.deltaTime;
             panel.color += new Color(0f, 0f, 0f, a * 0.01f);
@@ -81,32 +75,33 @@ public class Dolly : MonoBehaviour
             }
         }
     }
+    // My texts
     private string[] texts =
     {
         "Zombie Survival",
         "Created By KYM",
         "All Assets By Unity"
     };
-    private IEnumerator TextCoroutine()
+    private IEnumerator TextCoroutine() // First subtitle's showing coroutine
     {
         int i = 0;
-        float timer = 0f;
+        float timer = 0f; // Init
     
         while(true)
         {
-            timer += Time.deltaTime;
-            center.alpha = Mathf.PingPong(timer * 0.5f, 1f);
-            center.text = texts[i];
-            if(timer > 4f)
+            timer += Time.deltaTime; // Check time for next subtitles
+            center.alpha = Mathf.PingPong(timer * 0.5f, 1f); // Text Blink effect
+            center.text = texts[i]; // Enter new text from 'my texts'
+            if(timer > 4f) // For 4 seconds
             {
                 timer = 0f;
                 i++;
-                if (i >= texts.Length) break;
+                if (i >= texts.Length) break; // No more texts,
             }
 
             yield return new WaitForFixedUpdate();
         }
-        center.text = "";
+        center.text = ""; // Start displaying subtitles
         yield return new WaitForSeconds(2f);
         bottom.text = "Classified Island, 2010";
         yield return new WaitForSeconds(4f);
@@ -115,9 +110,9 @@ public class Dolly : MonoBehaviour
         bottom.text = "One scientist is involved in an organization's classified project.";
         yield return new WaitForSeconds(5f);
         bottom.text = "";
-        StartCoroutine(TalkCoroutine());
+        StartCoroutine(TalkCoroutine()); // Start Next Dialog coroutine
     }
-    private IEnumerator TalkCoroutine()
+    private IEnumerator TalkCoroutine() // Dialog
     {
         yield return new WaitForSeconds(3f);
         asianAnim.SetTrigger("IsTalk");
@@ -136,7 +131,7 @@ public class Dolly : MonoBehaviour
         bottom.text = "- Hmm..\n- Oh, Please..";
         yield return new WaitForSeconds(1f);
         asianAnim.SetTrigger("IsDead");
-        muzzle.SetActive(true);
+        muzzle.SetActive(true); // ================> Effect Time
         yield return new WaitForSeconds(0.5f);
         muzzle.SetActive(false);
         yield return new WaitForSeconds(2.5f);
@@ -153,15 +148,15 @@ public class Dolly : MonoBehaviour
         yield return new WaitForSeconds(3f);
         doBlack = true;
     }
-    private IEnumerator LoadCut2()
+    private IEnumerator LoadCut2() // Load Cut Scene 2 already
     {
-        op = SceneManager.LoadSceneAsync("CutScene2");
-        op.allowSceneActivation = false;
+        op = SceneManager.LoadSceneAsync("CutScene2"); // Load Start
+        op.allowSceneActivation = false; // Not allow load
         while(true)
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || load)
+            if (Input.GetKeyDown(KeyCode.Escape) || load) // ESC to Skip
             {
-                op.allowSceneActivation = true;
+                op.allowSceneActivation = true; // Allow load
                 yield break;
             }
 

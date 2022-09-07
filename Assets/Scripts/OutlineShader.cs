@@ -16,12 +16,12 @@ public class OutlineShader : MonoBehaviour
     }
     private void OnMouseEnter()
     {
-        materials.Add(outline);
-        render.materials = materials.ToArray();
+        materials.Add(outline); // Add Outline
+        render.materials = materials.ToArray(); // Show New Materials
     }
     private void OnMouseExit()
     {
-        materials.Remove(outline);
-        render.materials = materials.ToArray();
+        materials.Remove(outline); // Remove Outline
+        render.materials = materials.ToArray(); // Show origin
     }
 }

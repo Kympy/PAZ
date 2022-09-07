@@ -221,11 +221,12 @@ public class PlayerController : MonoBehaviour
             */
         }
     }
-    private bool IsGrounded()
+    private bool IsGrounded() // Is player on the ground?
     {
-        if (Physics.CheckSphere(new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z), groundClearance, 1 << LayerMask.NameToLayer("Terrain")))
+        if (Physics.CheckSphere(new Vector3(transform.position.x, transform.position.y - groundDistance, transform.position.z),
+            groundClearance, 1 << LayerMask.NameToLayer("Terrain")))
         {
-            IsFalling = false;
+            IsFalling = false; // Is Player Falling?
             return true;
         }
         else
@@ -245,7 +246,7 @@ public class PlayerController : MonoBehaviour
         }
         else return false;
     }
-    private IEnumerator FallingCheck()
+    private IEnumerator FallingCheck() // Is Player falling?
     {
         CoroutineAlready = true;
         int timer = 0;
@@ -254,20 +255,20 @@ public class PlayerController : MonoBehaviour
             if(IsGrounded() == false)
             {
                 timer += 1;
-                if(timer >= 3)
+                if(timer >= 3) // If falling time is larger than three,
                 {
-                    IsFalling = true;
+                    IsFalling = true; // Player is falling now.
                     CoroutineAlready = false;
                     yield break;
                 }
             }
-            else
+            else // Is ground
             {
-                IsFalling = false;
+                IsFalling = false; // Not falling state
                 CoroutineAlready = false;
                 yield break;
             }
-            yield return oneSec;
+            yield return oneSec; // Check by one second
         }
     }
     private void Jump()
@@ -330,16 +331,18 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
     }
-    private void MouseCamera()
+    private void MouseCamera() // Player Camera Control
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P)) // Camera Stop
         {
-            CursorLocked = CursorLocked ? false : true;
+            CursorLocked = CursorLocked ? false : true; // Set reversed
         }
         if (CursorLocked == true) return;
 
         relativeVector = transform.InverseTransformPoint(focusPoint.transform.position);
+        //Debug.Log(relativeVector + "origin");
         relativeVector /= relativeVector.magnitude;
+        //Debug.Log(relativeVector + "last");
         turnDirection = (relativeVector.x / relativeVector.magnitude);
 
         xRotate = focusPoint.transform.localEulerAngles.x - Input.GetAxis("Mouse Y") * Time.deltaTime * 100f; // Get X rotate
@@ -357,7 +360,7 @@ public class PlayerController : MonoBehaviour
             followCam.m_Lens.FieldOfView = -Input.GetAxis("Mouse ScrollWheel") * 10f + followCam.m_Lens.FieldOfView;
         }
     }
-    private void UpperBodyRotate()
+    private void UpperBodyRotate() // Player Upper body rotation
     {
         upperBody.Rotate(0f, 0f, xRotate);
     }
@@ -388,7 +391,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Fire()
     {
-        if (_InputManager.LeftClick && IsGun == false)
+        if (_InputManager.LeftClick && IsGun == false) // Axe Movement
         {
             _Animator.SetTrigger("First");
             return;
@@ -435,7 +438,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        else
+        else // When Idle aiming
         {
             muzzleEffect.SetActive(false); // hide muzzle
             casingEffect.SetActive(false); // hide casing
@@ -451,7 +454,7 @@ public class PlayerController : MonoBehaviour
                     {
                         HasGun = true;
                         GunMode(); // Change mode
-                        Destroy(hit.transform.gameObject); // destroy grounded prop
+                        Destroy(hit.transform.gameObject); // Destroy grounded prop
                     }
                     else if(hit.transform.CompareTag("DropHealth")) // Health recover items
                     {
@@ -465,7 +468,7 @@ public class PlayerController : MonoBehaviour
                         UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
                         Destroy(hit.transform.gameObject);
                     }
-                    else if(hit.transform.CompareTag("Key"))
+                    else if(hit.transform.CompareTag("Key")) // Key items
                     {
                         keyCount++;
                         Destroy(hit.transform.gameObject);
@@ -474,18 +477,18 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void Aim()
+    private void Aim() // Mouse Right Clicking
     {
-        if(IsAim)
+        if(IsAim) // true
         {
-            StopCoroutine(nameof(AimDown));
+            StopCoroutine(nameof(AimDown)); // Stop last coroutine
             followCam.m_Lens.FieldOfView = Mathf.Lerp(followCam.m_Lens.FieldOfView, 35f, Time.deltaTime * 8f);
-            transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character
+            transform.Rotate(Time.deltaTime * turnDirection * turnMultiplier * 5f * transform.up); // Rotate Character together
             focusPoint.transform.parent.Rotate(Time.deltaTime * -turnDirection * turnMultiplier * 5f * transform.up);
         }
-        else if(Input.GetMouseButtonUp(1))
+        else if(Input.GetMouseButtonUp(1)) // Right Click Up
         {
-            StartCoroutine(AimDown());
+            StartCoroutine(AimDown()); // Aim Release
         }
     }
     private IEnumerator AimDown()
@@ -493,7 +496,7 @@ public class PlayerController : MonoBehaviour
         while(true)
         {
             followCam.m_Lens.FieldOfView += 5f;
-            if (followCam.m_Lens.FieldOfView > 50f)
+            if (followCam.m_Lens.FieldOfView > 50f) // To original FOV
             {
                 followCam.m_Lens.FieldOfView = 50f;
                 yield break;
@@ -514,16 +517,16 @@ public class PlayerController : MonoBehaviour
         int need = maxBulletCount - bulletCount; // How many bullets I need?
         if(need <= haveBulletCount) // I have enough bullets
         {
-            bulletCount += need;
-            haveBulletCount -= need;
+            bulletCount += need; // Charge
+            haveBulletCount -= need; // Minus Used value
         }
         else // I have not enough bullets
         {
-            bulletCount += haveBulletCount;
-            haveBulletCount = 0;
+            bulletCount += haveBulletCount; // Charge only I have
+            haveBulletCount = 0; // I don't have any now.
         }
-        Reloading = false;
-        UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount);
+        Reloading = false; // Finish reloading
+        UIManager.Instance.SetBulletUI(bulletCount, haveBulletCount); // Update UI
     }
     private void SlotChange() // Num1 Num2
     {

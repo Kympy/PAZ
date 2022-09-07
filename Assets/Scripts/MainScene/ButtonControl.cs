@@ -10,31 +10,31 @@ public class ButtonControl : MonoBehaviour
     private Button ExitButton;
     private Button LoadButton;
 
-    private void Awake()
+    private void Awake() // Find my buttons
     {
         PlayButton = GameObject.Find("PlayButton").GetComponent<Button>();
         LoadButton = GameObject.Find("LoadButton").GetComponent<Button>();
         ExitButton = GameObject.Find("ExitButton").GetComponent<Button>();
     }
 
-    private void Start()
+    private void Start() // Set Functions to each button
     {
         PlayButton.onClick.AddListener(() => GameScene());
         LoadButton.onClick.AddListener(() => LoadGame());
         ExitButton.onClick.AddListener(() => ExitGame());
     }
-    private void GameScene()
+    private void GameScene() // New Game Button
     {
-        GameManager.Instance.willLoadData = false;
-        GameManager.Instance.LoadSceneName = "CutScene";
-        SceneManager.LoadScene("LoadingScene");
+        GameManager.Instance.willLoadData = false; // Data load false
+        GameManager.Instance.LoadSceneName = "CutScene"; // Show Cutscene
+        SceneManager.LoadScene("LoadingScene"); // Call Loading Scene
     }
-    private void LoadGame()
+    private void LoadGame() // Load Button
     {
-        GameManager.Instance.GoToLoad();
+        GameManager.Instance.GoToLoad(); // Load Data from local path
     }
-    private void ExitGame()
+    private void ExitGame() // Exit Button
     {
-        Application.Quit();
+        Application.Quit(); // Go out to window
     }
 }

@@ -21,11 +21,11 @@ public class NormalZombie : ZombieBase
         hitBackTime = new WaitForSeconds(2.15f);
         base.Start();
     }
-    public void AttackTriggerOn()
+    public void AttackTriggerOn() // Enable Arm Collider
     {
         attackCollider.enabled = true;
     }
-    public void AttackTriggerOff()
+    public void AttackTriggerOff() // Disable Arm Collider
     {
         attackCollider.enabled = false;
     }

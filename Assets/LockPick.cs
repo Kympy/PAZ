@@ -72,7 +72,7 @@ public class LockPick : MonoBehaviour
         }
         if (waitReset == false) // Can't rotate when reset time
         {
-            key.transform.position = pivot.position;
+            key.transform.position = pivot.position; // Set key's position same with pivot's position
             // Get Mouse X
             mouseX = Input.GetAxis("Mouse X");
             // Set Key's rotation

@@ -95,11 +95,11 @@ public class UIManager : Singleton<UIManager>
         if(UICoroutine != null)
         StopCoroutine(UICoroutine);
     }
-    private IEnumerator UpdateHPBar(float current, float max)
+    private IEnumerator UpdateHPBar(float current, float max) // Update HP Bar Background and HP
     {
         hpBar.fillAmount = current / max;
         while (true)
-        {
+        {   // Background Movement
             hpBarBack.fillAmount = Mathf.Lerp(hpBarBack.fillAmount, current / max, Time.deltaTime * 1.5f);
             //Debug.Log(hpBarBack.fillAmount);
             if(Mathf.Approximately(hpBarBack.fillAmount, current / max))
