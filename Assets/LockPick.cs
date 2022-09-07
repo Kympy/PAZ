@@ -64,7 +64,7 @@ public class LockPick : MonoBehaviour
     }
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape)) // Cancel lock sys
+        if(Input.GetKeyDown(KeyCode.Q)) // Cancel lock sys
         {
             UIManager.Instance.ToggleLockUI(false);
             DoorManager.Instance.ClearCurrentDoor(); // Player doesn't tring unlock door

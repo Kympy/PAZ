@@ -305,13 +305,21 @@ public class PlayerController : MonoBehaviour
                 {
                     if (moveSpeed > BackSpeed)
                     {
-                        moveSpeed = BackSpeed;
+                        moveSpeed -= 0.1f;
                     }
                     else moveSpeed = BackSpeed;
                 }
                 else if (_InputManager.Horizontal != 0)
                 {
-                    moveSpeed = WalkSpeed;
+                    if (moveSpeed > WalkSpeed)
+                    {
+                        moveSpeed -= 0.1f;
+                    }
+                    else if (moveSpeed < WalkSpeed)
+                    {
+                        moveSpeed += 0.1f;
+                    }
+                    else moveSpeed = WalkSpeed;
                 }
                 else
                 {
