@@ -16,6 +16,11 @@ public class UIManager : Singleton<UIManager>
 
     // Game UI
     private CanvasGroup UICanvas = null;
+    // ESC
+    private CanvasGroup ESCCanvas;
+    private Button SaveButton;
+    private Button LoadButton;
+    private Button MainButton;
     // Lock system UI
     private GameObject LockUICam = null;
 
@@ -38,6 +43,18 @@ public class UIManager : Singleton<UIManager>
         OpenText.SetActive(false);
 
         UICanvas = GameObject.Find("UICanvas").GetComponent<CanvasGroup>();
+        ESCCanvas = GameObject.Find("ESCCanvas").GetComponent<CanvasGroup>();
+
+        SaveButton = ESCCanvas.transform.GetChild(0).GetComponent<Button>();
+        LoadButton = ESCCanvas.transform.GetChild(1).GetComponent<Button>();
+        MainButton = ESCCanvas.transform.GetChild(2).GetComponent<Button>();
+
+        SaveButton.onClick.AddListener();
+        LoadButton.onClick.AddListener();
+        MainButton.onClick.AddListener();
+
+        ESCCanvas.alpha = 0f;
+        ESCCanvas.interactable = false;
 
         LockUICam = GameObject.Find("LockUICam");
         LockUICam.SetActive(false);
@@ -116,5 +133,24 @@ public class UIManager : Singleton<UIManager>
     public void HideDoorText()
     {
         OpenText.SetActive(false);
+    }
+    public void ShowESC(bool boolean)
+    {
+        if(boolean)
+        {
+            ESCCanvas.alpha = 1f;
+            ESCCanvas.interactable = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            ESCCanvas.alpha = 0f;
+            ESCCanvas.interactable = false;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Time.timeScale = 1f;
+        }
     }
 }

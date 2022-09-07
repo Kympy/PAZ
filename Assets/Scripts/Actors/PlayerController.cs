@@ -22,14 +22,16 @@ public class PlayerController : MonoBehaviour
     private float fireTimer = 0f; // Fire timer
     private const float fireTime = 0.15f; // My gun fire rate
     // Bullet
-    private int bulletCount = 30; // current Ammo count
+    public int bulletCount = 30; // current Ammo count
     private const int maxBulletCount = 30; // Max Ammo
-    private int haveBulletCount = 9999;
+    public int haveBulletCount = 9999;
     // Health
-    private int itemCount = 2;
+    public int itemCount = 2;
     // HP
-    private float currentHP;
+    public float currentHP;
     private float MaxHP = 1000f;
+    // Key
+    public int keyCount = 0;
 
     [SerializeField, Range(0f, 50f)] private float WalkSpeed = 4f;
     [SerializeField, Range(0f, 50f)] private float RunSpeed = 8f;
@@ -67,7 +69,7 @@ public class PlayerController : MonoBehaviour
     private bool IsFire = false;
     private bool Reloading = false;
     private bool IsDead = false;
-    private bool HasGun = false;
+    public bool HasGun = false;
 
     private bool CursorLocked = false;
     private bool CoroutineAlready = false;
@@ -149,6 +151,14 @@ public class PlayerController : MonoBehaviour
             ShowMap();
             AnimationPlay();
             ResetLegMovement();
+        }
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            UIManager.Instance.ShowESC(true);
+        }
+        else if(Input.GetKeyUp(KeyCode.Escape))
+        {
+            UIManager.Instance.ShowESC(false);
         }
     }
     private void LateUpdate()
