@@ -18,7 +18,6 @@ public class OutlineShader : MonoBehaviour
     {
         materials.Add(outline);
         render.materials = materials.ToArray();
-        
     }
     private void OnMouseExit()
     {

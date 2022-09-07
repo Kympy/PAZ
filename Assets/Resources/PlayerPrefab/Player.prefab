@@ -2011,7 +2011,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8779883717110295599}
   m_LocalRotation: {x: 0.025741844, y: -0.000003181398, z: 0.000000081723556, w: 0.99966866}
-  m_LocalPosition: {x: 0.12, y: 1.28, z: 1.59}
+  m_LocalPosition: {x: 0.301, y: 1.309, z: 1.023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4852,9 +4852,9 @@ MonoBehaviour:
   currentHP: 0
   MaxHP: 1000
   keyCount: 0
-  WalkSpeed: 2
-  RunSpeed: 4.5
-  BackSpeed: 2
+  WalkSpeed: 3
+  RunSpeed: 6
+  BackSpeed: 3
   jumpPower: 6
   groundClearance: 0.25
   groundDistance: 0.25

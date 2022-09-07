@@ -346,7 +346,7 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            followCam.m_Lens.FieldOfView = Input.GetAxis("Mouse ScrollWheel") * 10f + followCam.m_Lens.FieldOfView;
+            followCam.m_Lens.FieldOfView = -Input.GetAxis("Mouse ScrollWheel") * 10f + followCam.m_Lens.FieldOfView;
         }
     }
     private void UpperBodyRotate()
@@ -432,8 +432,8 @@ public class PlayerController : MonoBehaviour
             muzzleEffect.SetActive(false); // hide muzzle
             casingEffect.SetActive(false); // hide casing
             IsFire = false;
-            Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * 10f, Color.green);
-            if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, 10f, 1 << LayerMask.NameToLayer("Props")))
+            Debug.DrawRay(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward * 13f, Color.green);
+            if (Physics.Raycast(Camera.main.transform.position + gunRayOffset, Camera.main.transform.forward, out hit, 13f, 1 << LayerMask.NameToLayer("Props")))
             {
 
                 if(_InputManager.E) // Get
